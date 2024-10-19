@@ -1,22 +1,21 @@
-class Patient()
+class Patient:
+    def search_patient():
+        # input: PHN
 
-    # input: PHN
-    def search_patient()
+    def create_patient():
+        # input: PHN, name, other personal data
 
-    # input: PHN, name, other personal data
-    def create_patient()
+    def retrieve_patients():
+        # input: name
 
-    # input: name
-    def retrieve_patients()
+    def update_patient():
+        # input: PHN
 
-    # input: PHN
-    def update_patient()
+    def delete_patient():
+        # input: PHN
 
-    # input: PHN
-    def delete_patient()
+    def list_patients():
+        # input: none
 
-    # input: none
-    def list_patients()
-
-    # input: PHN
-    def get_current_patient()
+    def get_current_patient():
+        # input: PHN

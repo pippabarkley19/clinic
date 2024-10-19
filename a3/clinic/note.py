@@ -5,16 +5,15 @@
 
 #going to need to import date time library
 
-class Note()
+class Note:
+    def create_note():
+        # input: current patient
 
-    # input: current patient
-    def create_note()
-
-    # input: current patient, desired text
-    def search_note()
+    def search_note():
+        # input: current patient, desired text
      
-    # input: current patient, note code
-    def update_note()
+    def update_note():
+        # input: current patient, note code
 
-    # input: current patient, note code
-    def delete_note()
+    def delete_note():
+        # input: current patient, note code

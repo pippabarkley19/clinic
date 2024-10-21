@@ -1,3 +1,6 @@
+from clinic.patient_record import PatientRecord
+from clinic.note import Note
+
 class Patient:
     def search_patient():
         # input: PHN

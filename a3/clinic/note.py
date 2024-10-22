@@ -6,6 +6,10 @@
 #going to need to import date time library
 
 class Note:
+    def __init__(self, index, description):
+        self.index = index
+        self.description = description
+        
     def create_note():
         # input: current patient
 

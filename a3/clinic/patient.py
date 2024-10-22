@@ -2,6 +2,14 @@ from clinic.patient_record import PatientRecord
 from clinic.note import Note
 
 class Patient:
+    def __init__(self, PHN, name, birthday, phone, email, address):
+        self.phn = PHN
+        self.name = name
+        self.bday = birthday
+        self.phone = phone
+        self.email = email
+        self.address = address
+
     def search_patient():
         # input: PHN
 

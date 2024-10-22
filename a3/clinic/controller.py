@@ -2,10 +2,10 @@ from clinic.patient import Patient
 from clinic.patient_record import PatientRecord
 from clinic.note import Note
 
-class Controller()
-
+class Controller():
+    # not sure if this will need an init
     # input: username, password
-    def login()
+    def login(self):
 
     # input: none
-    def logout()
+    def logout(self):

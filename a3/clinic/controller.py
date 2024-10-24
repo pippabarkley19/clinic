@@ -7,12 +7,11 @@ class Controller():
 
     def __init__(self):
         self.patients = [] # List of Patient instances
-        self.login = [] # List of Patient logins  
         self.current_patient = None 
         self.username = "user"
         self.password = "clinic2024"
         self.loggedIn = False
-        self.records = [[]] #List of Patient record
+
 
     # input: username, password
     def login(self, user, pword):
@@ -22,6 +21,7 @@ class Controller():
             if user == self.username and pword == self.password:
                 self.loggedIn = True
                 return True
+        return False 
 
 
     # input: none

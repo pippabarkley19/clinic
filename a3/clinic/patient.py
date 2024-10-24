@@ -1,8 +1,9 @@
 from clinic.patient_record import PatientRecord
 from clinic.note import Note
-from controller import patients 
-from controller import current_pateint 
-from controller import records 
+from clinic.controller import patients 
+from clinic.ontroller import current_pateint 
+from clinic.controller import records 
+from clinic.patient_record import PatientRecord
 
 class Patient:
     def __init__(self, PHN, name, birthday, phone, email, address):
@@ -12,6 +13,7 @@ class Patient:
         self.phone = phone
         self.email = email
         self.address = address
+        self.record = None
 
     def search_patient(PHN):
         # input: PHN
@@ -24,7 +26,7 @@ class Patient:
         # input: PHN, name, other personal data
         new_patient = cls(PHN, name, birthday, phone, email, address)
         patients.appened(new_patient)
-        records.appened(new_patient)
+        new_patient.record = PatientRecord()
 
     def retrieve_patients(name):
         # input: name

@@ -5,7 +5,8 @@
 
 #going to need to import date time library
 import datetime 
-from controller import reocrds
+from clinic.controller import records
+from clinic.patient import current_patient
 
 class Note:
     def __init__(self, index, description, timestamp):
@@ -13,20 +14,17 @@ class Note:
         self.description = description
         self.timestamp = timestamp
         
-    def create_note():
+    def create_note(self, description):
         # input: current patient
-        new_note = cls(index, description, timestamp)
-        my_record.appened(new_note)
-        
+        if current_patient != None:
+            new_note = cls(index, description, timestamp)
+            current_patient.record.notes.appened(new_note)
 
-
-
-
-    def search_note():
+    #def search_note():
         # input: current patient, desired text
      
-    def update_note():
+    #def update_note():
         # input: current patient, note code
 
-    def delete_note():
+    #def delete_note():
         # input: current patient, note code

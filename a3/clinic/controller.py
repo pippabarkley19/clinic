@@ -9,6 +9,7 @@ class Controller():
         self.patients = [] # List of Patient instances
         self.login = [] # List of Patient logins  
         self.current_patient = None 
+        self.records = [[]] #List of Patient record
 
     # not sure if this will need an init
     # input: username, password

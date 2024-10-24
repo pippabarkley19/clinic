@@ -1,5 +1,7 @@
 from clinic.note import Note
-from patient import my_record #????
+from controller import records
+
+
 
 
 class PatientRecord:

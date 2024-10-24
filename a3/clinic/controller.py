@@ -12,6 +12,7 @@ class Controller():
         self.username = "user"
         self.password = "clinic2024"
         self.loggedIn = False
+        self.records = [[]] #List of Patient record
 
     # input: username, password
     def login(self, user, pword):

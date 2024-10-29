@@ -1,8 +1,5 @@
 from clinic.patient_record import PatientRecord
 from clinic.note import Note
-from clinic.controller import patients 
-from clinic.ontroller import current_pateint 
-from clinic.controller import records 
 from clinic.patient_record import PatientRecord
 
 class Patient:
@@ -13,61 +10,76 @@ class Patient:
         self.phone = phone
         self.email = email
         self.address = address
-        self.record = None
-
-    def search_patient(PHN):
-        # input: PHN
-        for patient in patients:
-            if patient.PHN == PHN:
+        self.record = PatientRecord()
+    
+    def create_note(self, text):
+        record.create_note(text)
+        
+    def search_patient(self, PHN):
+        for patient in self.patients:
+            if (patient.phn == PHN):
                 return patient
         return None
+    
+    def create_patient(self, PHN, name, birthday, phone, email, address):
+        if self.loggedIn:
+            if not self.search_patient(PHN):
+                patient = Patient(PHN, name, birthday, phone, email, address)
+                self.patients.append(patient)
+                return True
+            else:
+                return False
+        else:
+            return False
 
-    def create_patient(cls, PHN, name, birthday, phone, email, address):
-        # input: PHN, name, other personal data
-        new_patient = cls(PHN, name, birthday, phone, email, address)
-        patients.appened(new_patient)
-        new_patient.record = PatientRecord()
-
-    def retrieve_patients(name):
-        # input: name
+    def retrieve_patients(self,name):
         matches = [] 
         for patient in patients:
             if patient.name == name:
                 matches.apppend(patient)
         return matches 
 
-    def update_patient(PHN, patient):
-        # input: PHN
-        if PHN is not None:
-            self.phn = PHN
-        if name is not None:
-            self.name = name
-        if bday is not None:
-            self.bday = birthday
-        if phone is not None:
-            self.phone = phone
-        if email is not None:
-            self.email = email
-        if address is not None:
-            self.address = address
+    def update_patient(self, PHN, name, birthday, phone, email, address):
+        patient = self.search_patient(PHN)
+        if patient:
+            patient.phn = PHN
+            patient.name = name
+            patient.bday = birthday
+            patient.phone = phone
+            patient.email = email
+            patient.address = address
+            return True
+        else:
+            return False
 
-    def delete_patient(PHN):
-        # input: PHN
-        for patient in patients:
-            if patient.PHN == PHN:
-                patients.remove(patient)
+    def delete_patient(self,PHN):
+        patient = self.search_patient(PHN)
+        if patient:
+            self.patient.remove(patient)
+            return True
+        else:
+            return False
 
-    def list_patients():
-        # input: none
-        print(patients)
+    def list_patients(self):
+        patients_list = []
+        for patient in self.patients:
+            patients_list.append(patient)
+        return patients_list
 
-    def set_current_patient(PHN):
-        for patient in patients:
-            if patient.PHN == PHN:
-                current_patient = patient
+    def set_current_patient(self, PHN):
+        patient = self.search_patient(PHN)
+        if patient:
+            for patient in self.patients:
+                if patient.PHN == PHN:
+                    self.current_patient = patient
+            return True
+        else:
+            return False
 
-    def get_current_patient():
-        # input: PHN
-        return current_patient 
+    def get_current_patient(self):
+        if self.current_pateint:
+            return self.current_patient 
+        else:
+            return False
 
     

@@ -1,7 +1,9 @@
 from clinic.patient import Patient
 from clinic.patient_record import PatientRecord
 from clinic.note import Note
- 
+
+#loggedIn = False
+
 class Controller():
 
     def __init__(self):

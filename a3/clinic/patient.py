@@ -12,6 +12,13 @@ class Patient:
         self.email = email
         self.address = address
         self.record = PatientRecord()
+
+    def __eq__(self, other):
+        if isinstance(other, Patient):
+            return (self.phn == other.phn and self.name == other.name and 
+                    self.bday == other.bday and self.phone == other.phone and 
+                    self.email == other.email and self.address == other.address)
+        return False
     
     def create_note(self, text):
         #if self.loggedIn:
@@ -20,12 +27,7 @@ class Patient:
         #else:
             #return None
 
-    def __eq__(self, other):
-        if isinstance(other, Patient):
-            return (self.phn == other.phn and self.name == other.name and 
-                    self.bday == other.bday and self.phone == other.phone and 
-                    self.email == other.email and self.address == other.address)
-        return False
+
 
 
 

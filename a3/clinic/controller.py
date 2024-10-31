@@ -1,6 +1,6 @@
-from clinic.patient import Patient
-from clinic.patient_record import PatientRecord
-from clinic.note import Note
+from .patient import Patient
+from .patient_record import PatientRecord
+from .note import Note
 
 #loggedIn = False
 

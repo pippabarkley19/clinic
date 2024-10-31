@@ -8,5 +8,7 @@ from clinic.note import Note
 class PatientTests(TestCase):
     def setUp(self):
         self.controller = Controller()
+
+
     
     

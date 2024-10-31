@@ -11,6 +11,3 @@ class Note:
         if isinstance(other, Note):
             return self.index == other.index and self.description == other.description
         return False
-
-
-        

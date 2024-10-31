@@ -1,10 +1,10 @@
 from .patient_record import PatientRecord
 from .note import Note
 from .patient_record import PatientRecord
-#from controller import loggedIn
 
 class Patient:
     def __init__(self, PHN, name, birthday, phone, email, address):
+        # initialized the patient object with the given parameters, as well as creates an instance of PatienttRecord for every patient
         self.phn = PHN
         self.name = name
         self.bday = birthday
@@ -14,6 +14,8 @@ class Patient:
         self.record = PatientRecord()
 
     def __eq__(self, other):
+        # defines what equality of patient objects means
+        # returns true to indicate both objects exist
         if isinstance(other, Patient):
             return (self.phn == other.phn and self.name == other.name and 
                     self.bday == other.bday and self.phone == other.phone and 
@@ -21,111 +23,14 @@ class Patient:
         return False
     
     def create_note(self, text):
-<<<<<<< HEAD
-        #if self.loggedIn:
+        # once again passes this call to patient_record now that the patients record is accesible through self
+        # returns true to indicate success
         self.record.create_note(text)
         return True
-        #else:
-            #return None
 
 
 
 
 
-=======
-        if self.loggedIn:
-            self.record.create_note(text)
-            return True
-        else:
-            return None
-        
-    def search_patient(self, PHN):
-        if self.loggedIn:
-            for patient in self.patients:
-                if (patient.phn == PHN):
-                    return patient
-            return None
-        else:
-            return None
-    
-    def create_patient(self, PHN, name, birthday, phone, email, address):
-        if self.loggedIn:
-            if not self.search_patient(PHN):
-                patient = Patient(PHN, name, birthday, phone, email, address)
-                self.patients.append(patient)
-                return True
-            else:
-                return False
-        else:
-            return None
-
-    def retrieve_patients(self,name):
-        if self.loggedIn:
-            matches = [] 
-            for patient in self.patients:
-                if patient.name == name:
-                    matches.apppend(patient)
-            return matches 
-        else:
-            return None
-
-    def update_patient(self, PHN, name, birthday, phone, email, address):
-        if self.loggedIn:
-            patient = self.search_patient(PHN)
-            if patient:
-                patient.phn = PHN
-                patient.name = name
-                patient.bday = birthday
-                patient.phone = phone
-                patient.email = email
-                patient.address = address
-                return True
-            else:
-                return False
-        else:
-            return False
-
-    def delete_patient(self,PHN):
-        if self.loggedIn:
-            patient = self.search_patient(PHN)
-            if patient:
-                self.patient.remove(patient)
-                return True
-            else:
-                return False
-        else:
-            return False
-
-    def list_patients(self):
-        if self.loggedIn:
-            patients_list = []
-            for patient in self.patients:
-                patients_list.append(patient)
-            return patients_list
-        else:
-            return None
-
-    def set_current_patient(self, PHN):
-        if self.loggedIn:
-            patient = self.search_patient(PHN)
-            if patient:
-                for patient in self.patients:
-                    if patient.PHN == PHN:
-                        self.current_patient = patient
-                return True
-            else:
-                return False
-        else:
-            return None
-
-    def get_current_patient(self):
-        if self.loggedIn:
-            if self.current_patient:
-                return self.current_patient 
-            else:
-                return False
-        else:
-            return None
->>>>>>> 20ccd6a6cecf21290714baeebd1cf15e16bbe5da
 
     

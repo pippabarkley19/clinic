@@ -1,42 +1,18 @@
 from .note import Note
-#from controller import loggedIn
 
 class PatientRecord:
     
     def __init__(self):
+        # initializes a collection of notes for every instance of patient record, as well as the counter which represents the index of each note
         self.notes = []
         self.counter = 1
     
     def create_note(self, text):
-        note = Note(self.counter, text)  # Removed `index` parameter as it wasn't needed
+        # passed from controller > patient > here, and finally appends the note with the appropriate counter and text to the patient_record's collection of notes
+        # returns a note object
+        note = Note(self.counter, text) 
         self.notes.append(note)
-        self.counter += 1  # Increment counter for unique note indices
+        self.counter += 1 
         return note
 
-    """
-    def create_note(self, index, text):
-<<<<<<< HEAD
-        #if self.loggedIn:
-        note = Note(text, indexs)
-        self.notes.append(note)
-        #else:
-           #return None
-    """
 
-
-=======
-        if self.loggedIn:
-            note = Note(text, index)
-            self.notes.append(note)
-        else:
-           return None
-
-    def list_notes(self):
-        if self.loggedIn:
-            notes_list = []
-            for note in self.notes:
-                notes_list.append(note)
-            return notes_list
-        else: 
-            return None
->>>>>>> 20ccd6a6cecf21290714baeebd1cf15e16bbe5da

@@ -3,49 +3,14 @@ from datetime import datetime
 
 class Note:
     def __init__(self, index, description):
+        # defines the initialization of a note, and collects the timestamp of when it was called
         self.index = index
         self.description = description
         self.timestamp = datetime.now()
 
-<<<<<<< HEAD
     def __eq__(self, other):
+        # defines how equality is judged for instances of note objects
+        # returns false if given objects don't exist
         if isinstance(other, Note):
             return self.index == other.index and self.description == other.description
         return False
-=======
-    def search_note(self, index):
-        if self.loggedIn:
-            patient =  self.search(self.current_patient.phn)
-            for note in patient.notes:
-                if (index == note.index):
-                    return note
-                else:
-                    return None
-        else:
-            return None
-     
-    def update_note(self, index, description, timestamp):
-        if self.loggedIn:
-            note = self.search_note(index)
-            if note:
-                note.index = index 
-                note.description = description
-                note.timestamp = timestamp
-                return True
-            else:
-                return False
-        else:
-            return False
-
-    def delete_note(self, index):
-        if self.loggedIn:
-            note = self.search_note(index)
-            if note:
-                self.notes.remove(note)
-                return True
-            else:
-                return False
-        else:
-            return False
-        
->>>>>>> 20ccd6a6cecf21290714baeebd1cf15e16bbe5da

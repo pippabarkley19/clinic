@@ -22,6 +22,10 @@ class Patient:
                     self.email == other.email and self.address == other.address)
         return False
     
+    def __str__(self):
+        # defines what a string representation of patient objects should look like
+        return f"Patient: {self.name}, Birthday: {self.bday}"
+
     def create_note(self, text):
         # once again passes this call to patient_record now that the patients record is accesible through self
         # returns true to indicate success

@@ -1,5 +1,4 @@
 from datetime import datetime
-#from controller import loggedIn
 
 class Note:
     def __init__(self, index, description):
@@ -14,3 +13,7 @@ class Note:
         if isinstance(other, Note):
             return self.index == other.index and self.description == other.description
         return False
+    
+    def __str__(self):
+        # defines how a string representation of note objects should be formatted
+        return f"Index: {self.index}, Description: {self.description}"

@@ -1,40 +1,58 @@
-from .patient_record import PatientRecord
-from .note import Note
-from .patient_record import PatientRecord
+from clinic.patient_record import PatientRecord
 
-class Patient:
-    def __init__(self, PHN, name, birthday, phone, email, address):
-        # initialized the patient object with the given parameters, as well as creates an instance of PatienttRecord for every patient
-        self.phn = PHN
-        self.name = name
-        self.bday = birthday
-        self.phone = phone
-        self.email = email
-        self.address = address
-        self.record = PatientRecord()
+class Patient():
+	''' class that represents a patient '''
 
-    def __eq__(self, other):
-        # defines what equality of patient objects means
-        # returns true to indicate both objects exist
-        if isinstance(other, Patient):
-            return (self.phn == other.phn and self.name == other.name and 
-                    self.bday == other.bday and self.phone == other.phone and 
-                    self.email == other.email and self.address == other.address)
-        return False
-    
-    def __str__(self):
-        # defines what a string representation of patient objects should look like
-        return f"Patient: {self.name}, Birthday: {self.bday}"
+	def __init__(self, phn, name, birth_date, phone, email, address):
+		''' constructs a patient '''
+		self.phn = phn
+		self.name = name
+		self.birth_date = birth_date
+		self.phone = phone
+		self.email = email
+		self.address = address
 
-    def create_note(self, text):
-        # once again passes this call to patient_record now that the patients record is accesible through self
-        # returns true to indicate success
-        self.record.create_note(text)
-        return True
+		self.record = PatientRecord()
 
+	def get_patient_record(self):
+		''' get the patient's record '''
+		return self.record
 
+	def __eq__(self, other):
+		''' checks whether this patient is the same as other patient '''
+		return self.phn == other.phn and self.name == other.name \
+		and self.birth_date == other.birth_date and self.phone == other.phone \
+		and self.email == other.email and self.address == other.address
 
+	def __str__(self):
+		''' converts the patient object to a string representation '''
+		return str(self.phn) + "; " + self.name + "; " + self.birth_date + \
+		"; " + self.phone + "; " + self.email + "; " + self.address
 
+	def __repr__(self):
+		''' converts the patient object to a string representation for debugging '''
+		return "Patient(%r, %r, %r, %r, %r, %r)" % (self.phn, self.name, self.birth_date, self.phone, self.email, self.address)
 
+	def search_note(self, code):
+		''' delegates note search to the patient's record '''
+		return self.record.search_note(code)
 
-    
+	def create_note(self, text):
+		''' delegates note creation to the patient's record '''
+		return self.record.create_note(text)
+
+	def retrieve_notes(self, search_string):
+		''' delegates note retrieval to the patient's record '''
+		return self.record.retrieve_notes(search_string)
+
+	def update_note(self, code, new_text):
+		''' delegates note updating to the patient's record '''
+		return self.record.update_note(code, new_text)
+
+	def delete_note(self, code):
+		''' delegates note deletion to the patient's record '''
+		return self.record.delete_note(code)
+
+	def list_notes(self):
+		''' delegates note listing to the patient's record '''
+		return self.record.list_notes()

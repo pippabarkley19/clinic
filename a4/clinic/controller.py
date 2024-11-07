@@ -1,165 +1,262 @@
-from .patient import Patient
-from .patient_record import PatientRecord
-from .note import Note
-
-# note that almost everty method checks to ensure that the user is logged in, even though it is not part of the user story, is required.
+from clinic.patient import Patient
+from clinic.patient_record import PatientRecord
+from clinic.note import Note
 
 class Controller():
+	''' controller class that receives the system's operations '''
 
-    def __init__(self):
-        # initializes the controller with necessary fields to handle controller operations
-        self.patients = []
-        self.current_patient = None 
-        self.username = "user"
-        self.password = "clinic2024"
-        self.loggedIn = False
+	def __init__(self):
+		''' construct a controller class '''
+		self.users = {"user" : "clinic2024"}
+
+		self.username = None
+		self.password = None
+		self.logged = False
+
+		self.patients = {}
+		self.current_patient = None
+
+	def login(self, username, password):
+		''' user logs in the system '''
+		if self.logged:
+			return False
+		if username in self.users:
+			if password == self.users[username]:
+				self.username = username
+				self.password = password
+				self.logged = True
+				return True
+			else:
+				return False
+		else:
+			return False
+
+	def logout(self):
+		''' user logs out from the system '''
+		if not self.logged:
+			return False
+		else:
+			self.username = None
+			self.password = None
+			self.logged = False
+			self.current_patient = None
+			return True
+
+	def search_patient(self, phn):
+		''' user searches a patient '''
+		# must be logged in to do operation
+		if not self.logged:
+			return None
+
+		return self.patients.get(phn)
+
+	def create_patient(self, phn, name, birth_date, phone, email, address):
+		''' user creates a patient '''
+		# must be logged in to do operation
+		if not self.logged:
+			return None
+
+		# patient already exists, do not create them
+		if self.patients.get(phn):
+			return None
+
+		# finally, create a new patient
+		patient = Patient(phn, name, birth_date, phone, email, address)
+		self.patients[phn] = patient
+		return patient
+
+	def retrieve_patients(self, name):
+		''' user retrieves the patients that satisfy a search criterion '''
+		# must be logged in to do operation
+		if not self.logged:
+			return None
+
+		retrieved_patients = []
+		for patient in self.patients.values():
+			if name in patient.name:
+				retrieved_patients.append(patient)
+		return retrieved_patients
+
+	def update_patient(self, original_phn, phn, name, birth_date, phone, email, address):
+		''' user updates a patient '''
+		# must be logged in to do operation
+		if not self.logged:
+			return False
+
+		# first, search the patient by key
+		patient = self.patients.get(original_phn)
+
+		# patient does not exist, cannot update
+		if not patient:
+			return False
+
+		# patient is current patient, cannot update
+		if self.current_patient:
+			if patient == self.current_patient:
+				return False
+
+		# patient exists, update fields
+		patient.name = name
+		patient.birth_date = birth_date
+		patient.phone = phone
+		patient.email = email
+		patient.address = address
+
+		# treat different keys as a separate case
+		if original_phn != phn:
+			if self.patients.get(phn):
+				return False
+			self.patients.pop(original_phn)
+			patient.phn = phn
+			self.patients[phn] = patient
+
+		return True
+			
+	def delete_patient(self, phn):
+		''' user deletes a patient '''
+		# must be logged in to do operation
+		if not self.logged:
+			return False
+
+		# first, search the patient by key
+		patient = self.patients.get(phn)
+
+		# patient does not exist, cannot delete
+		if not patient:
+			return False
+
+		# patient is current patient, cannot delete
+		if self.current_patient:
+			if patient == self.current_patient:
+				return False
+
+		# patient exists, delete patient
+		self.patients.pop(phn)
+		return True
+
+	def list_patients(self):
+		''' user lists all patients '''
+		# must be logged in to do operation
+		if not self.logged:
+			return None
+
+		patients_list = []
+		for patient in self.patients.values():
+			patients_list.append(patient)
+		return patients_list
+
+	def set_current_patient(self, phn):
+		''' user sets the current patient '''
+
+		# must be logged in to do operation
+		if not self.logged:
+			return False
+
+		# first, search the patient by key
+		patient = self.patients.get(phn)
+
+		# patient does not exist
+		if not patient:
+			return False
+
+		# patient exists, set them to be the current patient
+		self.current_patient = patient
 
 
-    def login(self, user, pword):
-        # takes a user and password and checks against correct pair, logs in if match
-        # returns true to indicate success, false otherwise
-        if self.loggedIn:
-             return False
-        if user == self.username and pword == self.password:
-            self.loggedIn = True
-            return True
-        return False 
+	def get_current_patient(self):
+		''' get the current patient '''
+		# must be logged in to do operation
+		if not self.logged:
+			return None
 
-    def logout(self):
-        # takes no parameters: if logged in, logged out, if  not logged in, do nothing
-        # returns true to indicate success, false otherwise
-        if self.loggedIn:
-            self.loggedIn = False
-            return True
-        return False
+		# return current patient
+		return self.current_patient
 
-    def create_note(self, text):
-        # takes a piece of text and passes the call to patient which will eventually create the note in patient_record
-        # its necessary to do this because there are fields only accessible in controller that are involved in creating a note
-        # returns the 'note' which is just another call to create_note in patient.py
-        if self.loggedIn and self.current_patient:
-            note = self.current_patient.record.create_note(text)
-            return note
-        return None
+	def unset_current_patient(self):
+		''' unset the current patient '''
 
-    def delete_patient(self,PHN):
-       # checks if the instance exists and deletes it, if it doesn't exist, return false
-       # returns true to indicate success
-        if not self.loggedIn or (self.current_patient and self.current_patient.phn == PHN):
-            return False
-        patient = self.search_patient(PHN)
-        if patient:
-            self.patients.remove(patient)
-            return True
-        return False
-            
-    def update_patient(self, old_PHN, new_PHN, name, birthday, phone, email, address):
-        #  checks if the patient (identified by PHN) already exists, then updates given parameters accordingly
-        # returns true to indicate success
-        if not self.loggedIn or (self.current_patient and self.current_patient.phn == old_PHN):
-            return False
-        if self.search_patient(new_PHN) and old_PHN != new_PHN:
-            return False
-        patient = self.search_patient(old_PHN)
-        if patient:
-            patient.phn = new_PHN
-            patient.name = name
-            patient.bday = birthday
-            patient.phone = phone
-            patient.email = email
-            patient.address = address
-            return True
-        return None
-     
-    def update_note(self, index, description, timestamp=None):
-        # first checks if there is a current patient, searches the note by index for the current patient, then updates the note at that index accordingly
-        # returns true to indicate success
-        if not self.loggedIn or not self.current_patient:
-            return None
-        note = self.search_note(index)
-        if note:
-            note.description = description
-            note.timestamp = timestamp or note.timestamp
-            return True
-        return False
+		# must be logged in to do operation
+		if not self.logged:
+			return None
 
-    def get_current_patient(self):
-        # returns the object set as current patient given that there is a current_patient
-        return self.current_patient if self.loggedIn and self.current_patient else None
-
-    def retrieve_patients(self, name):
-        # creates a new empty list holding the patient instances that match the name provided
-        # returns the list of objects with the matching names
-        if not self.loggedIn:
-            return None
-        # list of matches is populated with specific instance patient in collection patients if the name provided matches the patient namee
-        matches = [patient for patient in self.patients if name in patient.name]
-        return matches
-
-    def list_patients(self):
-        # returns the list of patients
-        return self.patients if self.loggedIn else None
-    
-
-    def list_notes(self):
-        # returns the reversed order of the current patients notes
-        if not self.loggedIn or not self.current_patient:
-            return None
-        return list(reversed(self.current_patient.record.notes))  
-
-    def search_patient(self, PHN):
-        # iterates through list of patients and returns object with matching PHN
-        for patient in self.patients:
-            if patient.phn == PHN:
-                return patient
-        return None
-
-    def delete_note(self, index):
-        # if the note exists, remove the object from the current patient's collection of notes, return true if successful, otherwise return false
-        if not self.loggedIn or not self.current_patient:
-            return False
-        note = self.search_note(index)
-        if note:
-            self.current_patient.record.notes.remove(note)
-            return True
-        return False
-
-    def create_patient(self, PHN, name, birthday, phone, email, address):
-        # check if the patient already exists via searching the PHN, if they dont exist, create a new object witht the parameters provided, and return true to indicate success
-        if not self.loggedIn:
-            return None
-        if not self.search_patient(PHN):
-            patient = Patient(PHN, name, birthday, phone, email, address)
-            self.patients.append(patient)
-            return patient
-        return None
+		# unset current patient
+		self.current_patient = None
 
 
-    def set_current_patient(self, PHN):
-        # find the instance of the patient by searching by PHN, if it exists, set the object as current patient, return true to indicate success
-        if not self.loggedIn:  # Check if logged in
-            return None
-        patient = self.search_patient(PHN)
-        if patient:
-            self.current_patient = patient
-            return True
-        return None
+	def search_note(self, code):
+		''' user searches a note from the current patient's record '''
+		# must be logged in to do operation
+		if not self.logged:
+			return None
 
-    def search_note(self, index):
-        # if current_patient is set, traverse through that patients collection of notes, and return the note object with the matching index
-        if self.current_patient:
-            for note in self.current_patient.record.notes:  
-                if index == note.index:
-                    return note
-        return None
+		# there must be a valid current patient
+		if not self.current_patient:
+			return None
 
-    def retrieve_notes(self, description):
-        # returns the instance of note that matches the note in the current patient's collection with the same description
-        if not self.loggedIn or not self.current_patient:
-            return None
-        return [note for note in self.current_patient.record.notes if description in note.description]
-        return matches
-    
-    def unset_current_patient(self):
-        # sets current_patient to None
-        self.current_patient = None
+		# search a new note with the given code and return it 
+		return self.current_patient.search_note(code)
+
+	def create_note(self, text):
+		''' user creates a note in the current patient's record '''
+		# must be logged in to do operation
+		if not self.logged:
+			return None
+
+		# there must be a valid current patient
+		if not self.current_patient:
+			return None
+
+		# create a new note and return it
+		return self.current_patient.create_note(text)
+
+	def retrieve_notes(self, search_string):
+		''' user retrieves the notes from the current patient's record
+			that satisfy a search string '''
+		# must be logged in to do operation
+		if not self.logged:
+			return None
+
+		# there must be a valid current patient
+		if not self.current_patient:
+			return None
+
+		# return the found notes
+		return self.current_patient.retrieve_notes(search_string)
+
+	def update_note(self, code, new_text):
+		''' user updates a note from the current patient's record '''
+		# must be logged in to do operation
+		if not self.logged:
+			return None
+
+		# there must be a valid current patient
+		if not self.current_patient:
+			return None
+
+		# update note
+		return self.current_patient.update_note(code, new_text)
+
+	def delete_note(self, code):
+		''' user deletes a note from the current patient's record '''
+		# must be logged in to do operation
+		if not self.logged:
+			return None
+
+		# there must be a valid current patient
+		if not self.current_patient:
+			return None
+
+		# delete note
+		return self.current_patient.delete_note(code)
+
+	def list_notes(self):
+		''' user lists all notes from the current patient's record '''
+		# must be logged in to do operation
+		if not self.logged:
+			return None
+
+		# there must be a valid current patient
+		if not self.current_patient:
+			return None
+
+		return self.current_patient.list_notes()

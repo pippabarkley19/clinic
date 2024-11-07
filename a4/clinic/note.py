@@ -1,19 +1,22 @@
-from datetime import datetime
+import datetime
 
-class Note:
-    def __init__(self, index, description):
-        # defines the initialization of a note, and collects the timestamp of when it was called
-        self.index = index
-        self.description = description
-        self.timestamp = datetime.now()
+class Note():
+	''' class that represents a note '''
 
-    def __eq__(self, other):
-        # defines how equality is judged for instances of note objects
-        # returns false if given objects don't exist
-        if isinstance(other, Note):
-            return self.index == other.index and self.description == other.description
-        return False
-    
-    def __str__(self):
-        # defines how a string representation of note objects should be formatted
-        return f"Index: {self.index}, Description: {self.description}"
+	def __init__(self, code, text, timestamp=datetime.datetime.now()):
+		''' constructs a note '''
+		self.code = code
+		self.text = text
+		self.timestamp = timestamp
+
+	def __eq__(self, other):
+		''' checks whether this note is the same as other note '''
+		return self.code == other.code and self.text == other.text
+
+	def __str__(self):
+		''' converts the note object to a string representation '''
+		return str(self.code) + "; " + str(self.timestamp) + "; " + self.text
+
+	def __repr__(self):
+		''' converts the note object to a string representation for debugging '''
+		return "Note(%r, %r, %r)" % (self.code, self.timestamp, self.text)

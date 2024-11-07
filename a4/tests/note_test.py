@@ -1,32 +1,44 @@
 from unittest import TestCase
 from unittest import main
 from clinic.note import Note
+import datetime
 
-class NoteTests(TestCase):
+class NoteTest(TestCase):
+	def setUp(self):
+		self.note = Note(1, "Patient shows up with chest pain", datetime.datetime.now())
 
-    def test_note_equality(self):
+	def test_eq(self):
+		same_note = Note(1, "Patient shows up with chest pain", datetime.datetime.now())
+		different_note_1 = Note(2, "Patient shows up with chest pain", datetime.datetime.now())
+		different_note_2 = Note(1, "Patient has dizziness", datetime.datetime.now())
+		self.assertTrue(self.note == self.note)
+		self.assertTrue(self.note == same_note)
+		self.assertFalse(self.note == different_note_1)
+		self.assertFalse(self.note == different_note_2)
 
-        #set up testing items
-        note1 = Note(1, "Patient comes with headache and high blood pressure.")
-        note2 = Note(2, "Patient complains of a strong headache on the back of neck.")
-        note3 = Note(1, "Patient comes with headache and high blood pressure.")
+	def test_str(self):
+		same_note = Note(1, "Patient shows up with chest pain", datetime.datetime.now())
+		different_note_1 = Note(2, "Patient shows up with chest pain", datetime.datetime.now())
+		different_note_2 = Note(1, "Patient has dizziness", datetime.datetime.now())
+		self.assertEqual("1; " + str(self.note.timestamp) + "; Patient shows up with chest pain", str(self.note))
+		self.assertEqual("1; " + str(self.note.timestamp) + "; Patient shows up with chest pain", str(same_note))
+		self.assertEqual("2; " + str(self.note.timestamp) + "; Patient shows up with chest pain", str(different_note_1))
+		self.assertEqual("1; " + str(self.note.timestamp) + "; Patient has dizziness", str(different_note_2))
+		self.assertEqual(str(same_note), str(self.note))
+		self.assertNotEqual(str(different_note_1), str(self.note))
+		self.assertNotEqual(str(different_note_2), str(self.note))
 
-        # test equality
-        self.assertTrue(note1 == note3)
-        # test inequality
-        self.assertFalse(note1 == note2)
-
-    def test_note_str(self):
-
-        # set up testing items
-        note1 = Note(1, "Patient comes with headache and high blood pressure.")
-        note_expected = "Index: 1, Description: Patient comes with headache and high blood pressure."
-        note_not_expected = "Index: 2, Description: Patient comes with headache and high blood pressure."
-
-        # test str correct output
-        self.assertEqual(str(note1), note_expected)
-        # test str incorrect output
-        self.assertNotEqual(str(note1), note_not_expected)
+	def test_repr(self):
+		same_note = Note(1, "Patient shows up with chest pain", datetime.datetime.now())
+		different_note_1 = Note(2, "Patient shows up with chest pain", datetime.datetime.now())
+		different_note_2 = Note(1, "Patient has dizziness", datetime.datetime.now())
+		self.assertEqual("Note(1, " + repr(self.note.timestamp) + ", 'Patient shows up with chest pain')", repr(self.note))
+		self.assertEqual("Note(1, " + repr(same_note.timestamp) + ", 'Patient shows up with chest pain')", repr(same_note))
+		self.assertEqual("Note(2, " + repr(different_note_1.timestamp) + ", 'Patient shows up with chest pain')", repr(different_note_1))
+		self.assertEqual("Note(1, " + repr(different_note_2.timestamp) + ", 'Patient has dizziness')", repr(different_note_2))
+		self.assertEqual(repr(same_note), repr(self.note))
+		self.assertNotEqual(repr(different_note_1), repr(self.note))
+		self.assertNotEqual(repr(different_note_2), repr(self.note))
 
 if __name__ == '__main__':
-    main()
+	unittest.main()

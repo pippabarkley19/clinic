@@ -1,25 +1,31 @@
 from clinic.patient import Patient
 from clinic.patient_record import PatientRecord
 from clinic.note import Note
+from clinic.exception.invalid_login_exception import InvalidLoginException
+from clinic.exception.duplicate_login_exception import DuplicateLoginException
+from clinic.exception.invalid_logout_exception import InvalidLogoutException
+from clinic.exception.illegal_access_exception import IllegalAccessException
+from clinic.exception.illegal_operation_exception import IllegalOperationException
+from clinic.exception.no_current_patient_exception import NoCurrentPatientException
 
 class Controller():
 	''' controller class that receives the system's operations '''
 
-	def __init__(self):
+	def __init__(self, autosave):
 		''' construct a controller class '''
-		self.users = {"user" : "clinic2024"}
+		self.users = {"user" : "123456","ali" : "@G00dPassw0rd"}
 
 		self.username = None
 		self.password = None
 		self.logged = False
-
+		self.autosave = False 
 		self.patients = {}
 		self.current_patient = None
 
 	def login(self, username, password):
 		''' user logs in the system '''
 		if self.logged:
-			return False
+			raise DuplicateLoginException
 		if username in self.users:
 			if password == self.users[username]:
 				self.username = username
@@ -27,14 +33,14 @@ class Controller():
 				self.logged = True
 				return True
 			else:
-				return False
+				raise InvalidLoginException
 		else:
-			return False
+			raise InvalidLoginException
 
 	def logout(self):
 		''' user logs out from the system '''
 		if not self.logged:
-			return False
+			raise InvalidLogoutException
 		else:
 			self.username = None
 			self.password = None
@@ -46,7 +52,7 @@ class Controller():
 		''' user searches a patient '''
 		# must be logged in to do operation
 		if not self.logged:
-			return None
+			raise IllegalAccessException
 
 		return self.patients.get(phn)
 
@@ -54,11 +60,11 @@ class Controller():
 		''' user creates a patient '''
 		# must be logged in to do operation
 		if not self.logged:
-			return None
+			raise IllegalAccessException
 
 		# patient already exists, do not create them
 		if self.patients.get(phn):
-			return None
+			raise IllegalOperationException
 
 		# finally, create a new patient
 		patient = Patient(phn, name, birth_date, phone, email, address)
@@ -69,7 +75,7 @@ class Controller():
 		''' user retrieves the patients that satisfy a search criterion '''
 		# must be logged in to do operation
 		if not self.logged:
-			return None
+			raise IllegalAccessException
 
 		retrieved_patients = []
 		for patient in self.patients.values():
@@ -81,19 +87,27 @@ class Controller():
 		''' user updates a patient '''
 		# must be logged in to do operation
 		if not self.logged:
-			return False
+			raise IllegalAccessException
 
 		# first, search the patient by key
 		patient = self.patients.get(original_phn)
 
 		# patient does not exist, cannot update
 		if not patient:
-			return False
+			raise IllegalOperationException
+		
+		# check if the new phn is taken by a different patient
+		if phn != original_phn and self.patients.get(phn):
+			raise IllegalOperationException
+			
+		# patient is current patient, cannot update
+		if self.current_patient and patient == self.current_patient:
+			raise IllegalOperationException
 
 		# patient is current patient, cannot update
 		if self.current_patient:
 			if patient == self.current_patient:
-				return False
+				raise IllegalOperationException
 
 		# patient exists, update fields
 		patient.name = name
@@ -116,19 +130,19 @@ class Controller():
 		''' user deletes a patient '''
 		# must be logged in to do operation
 		if not self.logged:
-			return False
+			raise IllegalAccessException
 
 		# first, search the patient by key
 		patient = self.patients.get(phn)
 
 		# patient does not exist, cannot delete
 		if not patient:
-			return False
+			raise IllegalOperationException
 
 		# patient is current patient, cannot delete
 		if self.current_patient:
 			if patient == self.current_patient:
-				return False
+				raise IllegalOperationException
 
 		# patient exists, delete patient
 		self.patients.pop(phn)
@@ -138,7 +152,7 @@ class Controller():
 		''' user lists all patients '''
 		# must be logged in to do operation
 		if not self.logged:
-			return None
+			raise IllegalAccessException
 
 		patients_list = []
 		for patient in self.patients.values():
@@ -150,14 +164,14 @@ class Controller():
 
 		# must be logged in to do operation
 		if not self.logged:
-			return False
+			raise IllegalAccessException
 
 		# first, search the patient by key
 		patient = self.patients.get(phn)
 
 		# patient does not exist
 		if not patient:
-			return False
+			raise IllegalOperationException
 
 		# patient exists, set them to be the current patient
 		self.current_patient = patient
@@ -167,6 +181,9 @@ class Controller():
 		''' get the current patient '''
 		# must be logged in to do operation
 		if not self.logged:
+			raise IllegalAccessException
+		
+		if not isinstance(self.current_patient, Patient):
 			return None
 
 		# return current patient
@@ -177,7 +194,7 @@ class Controller():
 
 		# must be logged in to do operation
 		if not self.logged:
-			return None
+			raise IllegalAccessException
 
 		# unset current patient
 		self.current_patient = None
@@ -187,11 +204,11 @@ class Controller():
 		''' user searches a note from the current patient's record '''
 		# must be logged in to do operation
 		if not self.logged:
-			return None
+			raise IllegalAccessException
 
 		# there must be a valid current patient
 		if not self.current_patient:
-			return None
+			raise NoCurrentPatientException
 
 		# search a new note with the given code and return it 
 		return self.current_patient.search_note(code)
@@ -200,11 +217,11 @@ class Controller():
 		''' user creates a note in the current patient's record '''
 		# must be logged in to do operation
 		if not self.logged:
-			return None
+			raise IllegalAccessException
 
 		# there must be a valid current patient
 		if not self.current_patient:
-			return None
+			raise NoCurrentPatientException
 
 		# create a new note and return it
 		return self.current_patient.create_note(text)
@@ -214,11 +231,11 @@ class Controller():
 			that satisfy a search string '''
 		# must be logged in to do operation
 		if not self.logged:
-			return None
+			raise IllegalAccessException
 
 		# there must be a valid current patient
 		if not self.current_patient:
-			return None
+			raise NoCurrentPatientException
 
 		# return the found notes
 		return self.current_patient.retrieve_notes(search_string)
@@ -227,11 +244,11 @@ class Controller():
 		''' user updates a note from the current patient's record '''
 		# must be logged in to do operation
 		if not self.logged:
-			return None
+			raise IllegalAccessException
 
 		# there must be a valid current patient
 		if not self.current_patient:
-			return None
+			raise NoCurrentPatientException
 
 		# update note
 		return self.current_patient.update_note(code, new_text)
@@ -240,11 +257,11 @@ class Controller():
 		''' user deletes a note from the current patient's record '''
 		# must be logged in to do operation
 		if not self.logged:
-			return None
+			raise IllegalAccessException
 
 		# there must be a valid current patient
 		if not self.current_patient:
-			return None
+			raise NoCurrentPatientException
 
 		# delete note
 		return self.current_patient.delete_note(code)
@@ -253,10 +270,10 @@ class Controller():
 		''' user lists all notes from the current patient's record '''
 		# must be logged in to do operation
 		if not self.logged:
-			return None
+			raise IllegalAccessException
 
 		# there must be a valid current patient
 		if not self.current_patient:
-			return None
+			raise NoCurrentPatientException
 
 		return self.current_patient.list_notes()

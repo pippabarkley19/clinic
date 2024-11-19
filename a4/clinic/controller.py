@@ -1,27 +1,25 @@
-from clinic.patient import Patient
-from clinic.patient_record import PatientRecord
-from clinic.note import Note
+#from clinic.patient import Patient
 from clinic.exception.invalid_login_exception import InvalidLoginException
 from clinic.exception.duplicate_login_exception import DuplicateLoginException
 from clinic.exception.invalid_logout_exception import InvalidLogoutException
 from clinic.exception.illegal_access_exception import IllegalAccessException
 from clinic.exception.illegal_operation_exception import IllegalOperationException
 from clinic.exception.no_current_patient_exception import NoCurrentPatientException
+from clinic.dao.patient_dao_json import PatientDAOJSON
+from clinic.dao.note_dao_pickle import NoteDAOPickle
 
 class Controller():
 	''' controller class that receives the system's operations '''
 
 	def __init__(self, autosave):
-		''' construct a controller class '''
+		#self.autosave = False 
+		self.patient_dao = PatientDAOJSON()
+		self.note_dao = NoteDAOPickle()
 		self.users = {"user" : "123456","ali" : "@G00dPassw0rd"}
-
 		self.username = None
 		self.password = None
 		self.logged = False
-		self.autosave = False 
-		self.patients = {}
-		self.current_patient = None
-
+	
 	def login(self, username, password):
 		''' user logs in the system '''
 		if self.logged:
@@ -49,231 +47,46 @@ class Controller():
 			return True
 
 	def search_patient(self, phn):
-		''' user searches a patient '''
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-
-		return self.patients.get(phn)
+		self.patient_dao.search_patient(phn)
 
 	def create_patient(self, phn, name, birth_date, phone, email, address):
-		''' user creates a patient '''
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-
-		# patient already exists, do not create them
-		if self.patients.get(phn):
-			raise IllegalOperationException
-
-		# finally, create a new patient
-		patient = Patient(phn, name, birth_date, phone, email, address)
-		self.patients[phn] = patient
-		return patient
+		self.patient_dao.create_patient(phn, name, birth_date, phone, email, address)
 
 	def retrieve_patients(self, name):
-		''' user retrieves the patients that satisfy a search criterion '''
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-
-		retrieved_patients = []
-		for patient in self.patients.values():
-			if name in patient.name:
-				retrieved_patients.append(patient)
-		return retrieved_patients
+		self.patient_dao.retrieve_patients(name)
 
 	def update_patient(self, original_phn, phn, name, birth_date, phone, email, address):
-		''' user updates a patient '''
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-
-		# first, search the patient by key
-		patient = self.patients.get(original_phn)
-
-		# patient does not exist, cannot update
-		if not patient:
-			raise IllegalOperationException
-		
-		# check if the new phn is taken by a different patient
-		if phn != original_phn and self.patients.get(phn):
-			raise IllegalOperationException
-			
-		# patient is current patient, cannot update
-		if self.current_patient and patient == self.current_patient:
-			raise IllegalOperationException
-
-		# patient is current patient, cannot update
-		if self.current_patient:
-			if patient == self.current_patient:
-				raise IllegalOperationException
-
-		# patient exists, update fields
-		patient.name = name
-		patient.birth_date = birth_date
-		patient.phone = phone
-		patient.email = email
-		patient.address = address
-
-		# treat different keys as a separate case
-		if original_phn != phn:
-			if self.patients.get(phn):
-				return False
-			self.patients.pop(original_phn)
-			patient.phn = phn
-			self.patients[phn] = patient
-
-		return True
+		return self.patient_dao.update_patient(original_phn, phn, name, birth_date, phone, email, address)
 			
 	def delete_patient(self, phn):
-		''' user deletes a patient '''
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-
-		# first, search the patient by key
-		patient = self.patients.get(phn)
-
-		# patient does not exist, cannot delete
-		if not patient:
-			raise IllegalOperationException
-
-		# patient is current patient, cannot delete
-		if self.current_patient:
-			if patient == self.current_patient:
-				raise IllegalOperationException
-
-		# patient exists, delete patient
-		self.patients.pop(phn)
-		return True
+		return self.patient_dao.delete_patient(phn)
 
 	def list_patients(self):
-		''' user lists all patients '''
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-
-		patients_list = []
-		for patient in self.patients.values():
-			patients_list.append(patient)
-		return patients_list
+		return self.patient_dao.list_patients()
 
 	def set_current_patient(self, phn):
-		''' user sets the current patient '''
-
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-
-		# first, search the patient by key
-		patient = self.patients.get(phn)
-
-		# patient does not exist
-		if not patient:
-			raise IllegalOperationException
-
-		# patient exists, set them to be the current patient
-		self.current_patient = patient
-
+		self.patient_dao.set_current_patient(phn)
 
 	def get_current_patient(self):
-		''' get the current patient '''
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-		
-		if not isinstance(self.current_patient, Patient):
-			return None
-
-		# return current patient
-		return self.current_patient
+		return self.patient_dao.get_current_patient()
 
 	def unset_current_patient(self):
-		''' unset the current patient '''
-
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-
-		# unset current patient
-		self.current_patient = None
-
+		self.patient_dao.unset_current_patient()
 
 	def search_note(self, code):
-		''' user searches a note from the current patient's record '''
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-
-		# there must be a valid current patient
-		if not self.current_patient:
-			raise NoCurrentPatientException
-
-		# search a new note with the given code and return it 
-		return self.current_patient.search_note(code)
+		return self.patient_dao.search_note(code)
 
 	def create_note(self, text):
-		''' user creates a note in the current patient's record '''
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-
-		# there must be a valid current patient
-		if not self.current_patient:
-			raise NoCurrentPatientException
-
-		# create a new note and return it
-		return self.current_patient.create_note(text)
+		return self.patient_dao.create_note(text)
 
 	def retrieve_notes(self, search_string):
-		''' user retrieves the notes from the current patient's record
-			that satisfy a search string '''
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-
-		# there must be a valid current patient
-		if not self.current_patient:
-			raise NoCurrentPatientException
-
-		# return the found notes
-		return self.current_patient.retrieve_notes(search_string)
+		return self.patient_dao.retrieve_notes(search_string)
 
 	def update_note(self, code, new_text):
-		''' user updates a note from the current patient's record '''
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-
-		# there must be a valid current patient
-		if not self.current_patient:
-			raise NoCurrentPatientException
-
-		# update note
-		return self.current_patient.update_note(code, new_text)
+		return self.patient_dao.update_note(code, new_text)
 
 	def delete_note(self, code):
-		''' user deletes a note from the current patient's record '''
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-
-		# there must be a valid current patient
-		if not self.current_patient:
-			raise NoCurrentPatientException
-
-		# delete note
-		return self.current_patient.delete_note(code)
+		return self.patient_dao.delete_note(code)
 
 	def list_notes(self):
-		''' user lists all notes from the current patient's record '''
-		# must be logged in to do operation
-		if not self.logged:
-			raise IllegalAccessException
-
-		# there must be a valid current patient
-		if not self.current_patient:
-			raise NoCurrentPatientException
-
-		return self.current_patient.list_notes()
+		return self.patient_dao.list_notes()

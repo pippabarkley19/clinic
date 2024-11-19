@@ -1,21 +1,21 @@
-#from clinic.patient_record import PatientRecord
-#from clinic.note import Note
+
+from clinic.patient import Patient
+from clinic.patient_record import PatientRecord
+from clinic.note import Note
 from clinic.exception.invalid_login_exception import InvalidLoginException
 from clinic.exception.duplicate_login_exception import DuplicateLoginException
 from clinic.exception.invalid_logout_exception import InvalidLogoutException
 from clinic.exception.illegal_access_exception import IllegalAccessException
 from clinic.exception.illegal_operation_exception import IllegalOperationException
-from clinic.dao.patient_dao import PatientDAO
-
 
 class PatientDAOJSON(PatientDAO):
 
-	def __init__(self, autosave, logged=False):
+	def __init__(self, autosave):
 		''' construct a controller class '''
 		self.users = {"user" : "123456","ali" : "@G00dPassw0rd"}
 		self.username = None
 		self.password = None
-		self.logged = logged
+		self.logged = False
 		self.autosave = False 
 		self.patients = {}
 		self.current_patient = None

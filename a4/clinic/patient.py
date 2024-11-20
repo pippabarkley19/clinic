@@ -11,7 +11,7 @@ class Patient():
 		self.phone = phone
 		self.email = email
 		self.address = address
-
+		
 		self.record = PatientRecord(self.logged, self.autosave)
 
 	def get_patient_record(self):

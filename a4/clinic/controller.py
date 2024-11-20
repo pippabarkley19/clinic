@@ -21,7 +21,7 @@ class Controller():
 		self.users = {"user" : "123456","ali" : "@G00dPassw0rd"}
 		self.username = None
 		self.password = None
-		self.current_patient = self.patient_dao.current_patient
+		self.current_patient = None
 	
 	def login(self, username, password):
 		''' user logs in the system '''
@@ -90,8 +90,9 @@ class Controller():
 			raise IllegalAccessException
 		if not self.search_patient(phn):
 			raise IllegalOperationException
-		if self.current_patient or self.search_patient(phn) == self.current_patient:
-			raise IllegalOperationException
+		if self.current_patient:
+			if self.search_patient(phn) == self.current_patient:
+				raise IllegalOperationException
 		return self.patient_dao.delete_patient(phn)
 
 	def list_patients(self):
@@ -104,17 +105,17 @@ class Controller():
 			raise IllegalAccessException
 		if not self.search_patient(phn):
 			raise IllegalOperationException
-		return self.patient_dao.set_current_patient(phn)
+		self.current_patient = self.search_patient(phn)
 
 	def get_current_patient(self):
 		if not self.logged:
 			raise IllegalAccessException
-		return self.patient_dao.get_current_patient()
+		return self.current_patient
 
 	def unset_current_patient(self):
 		if not self.logged:
 			raise IllegalAccessException
-		return self.patient_dao.unset_current_patient()
+		self.current_patient = None
 
 	def search_note(self, code):
 		if not self.logged:
@@ -122,7 +123,6 @@ class Controller():
 		if not self.current_patient:
 			raise NoCurrentPatientException
 		return self.note_dao.search_note(code)
-
 
 	def create_note(self, text):
 		if not self.logged:

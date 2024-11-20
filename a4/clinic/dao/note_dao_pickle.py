@@ -1,12 +1,21 @@
 from clinic.dao.note_dao import NoteDAO
 from clinic.note import Note
 
+from clinic.exception.invalid_login_exception import InvalidLoginException
+from clinic.exception.duplicate_login_exception import DuplicateLoginException
+from clinic.exception.invalid_logout_exception import InvalidLogoutException
+from clinic.exception.illegal_access_exception import IllegalAccessException
+from clinic.exception.illegal_operation_exception import IllegalOperationException
+from clinic.exception.no_current_patient_exception import NoCurrentPatientException
+
 class NoteDAOPickle(NoteDAO):
 
-	def __init__(self):
+	def __init__(self, autosave, logged):
 		''' construct a patient record '''
 		self.counter = 0
 		self.notes = []
+		self.autosave = autosave
+		self.logged = logged
 
 	def search_note(self, code):
 		''' user searches a note from the current patient's record '''

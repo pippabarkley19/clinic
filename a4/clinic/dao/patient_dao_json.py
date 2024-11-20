@@ -2,6 +2,7 @@
 from clinic.patient import Patient
 from clinic.patient_record import PatientRecord
 from clinic.dao.patient_dao import PatientDAO
+from clinic.dao.note_dao_pickle import NoteDAOPickle
 #from clinic.note import Note
 
 from clinic.exception.illegal_access_exception import IllegalAccessException
@@ -9,15 +10,16 @@ from clinic.exception.illegal_operation_exception import IllegalOperationExcepti
 
 class PatientDAOJSON(PatientDAO):
 
-	def __init__(self, autosave):
+	def __init__(self, autosave, logged):
 		''' construct a controller class '''
 		self.users = {"user" : "123456","ali" : "@G00dPassw0rd"}
 		self.username = None
 		self.password = None
-		self.logged = False
-		self.autosave = False 
+		self.logged = logged
+		self.autosave = autosave 
 		self.patients = {}
 		self.current_patient = None
+		self.note_dao = NoteDAOPickle(self.logged, self.autosave)
 
 	def search_patient(self, phn):
 		''' user searches a patient '''
@@ -139,6 +141,7 @@ class PatientDAOJSON(PatientDAO):
 
 		# first, search the patient by key
 		patient = self.patients.get(phn)
+		self.note_dao.current_patient = patient
 
 		# patient does not exist
 		if not patient:

@@ -1,10 +1,9 @@
 
 from clinic.patient import Patient
 from clinic.patient_record import PatientRecord
-from clinic.note import Note
-from clinic.exception.invalid_login_exception import InvalidLoginException
-from clinic.exception.duplicate_login_exception import DuplicateLoginException
-from clinic.exception.invalid_logout_exception import InvalidLogoutException
+from clinic.dao.patient_dao import PatientDAO
+#from clinic.note import Note
+
 from clinic.exception.illegal_access_exception import IllegalAccessException
 from clinic.exception.illegal_operation_exception import IllegalOperationException
 

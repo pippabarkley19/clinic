@@ -1,5 +1,6 @@
 from clinic.dao.note_dao import NoteDAO
 from clinic.note import Note
+
 class NoteDAOPickle(NoteDAO):
 
 	def __init__(self):

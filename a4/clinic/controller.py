@@ -1,20 +1,23 @@
-#from clinic.patient import Patient
+from clinic.patient import Patient
+from clinic.note import Note
+from clinic.dao.patient_dao_json import PatientDAOJSON
+#from clinic.dao.note_dao_pickle import NoteDAOPickle
+
+
 from clinic.exception.invalid_login_exception import InvalidLoginException
 from clinic.exception.duplicate_login_exception import DuplicateLoginException
 from clinic.exception.invalid_logout_exception import InvalidLogoutException
 from clinic.exception.illegal_access_exception import IllegalAccessException
 from clinic.exception.illegal_operation_exception import IllegalOperationException
 from clinic.exception.no_current_patient_exception import NoCurrentPatientException
-from clinic.dao.patient_dao_json import PatientDAOJSON
-from clinic.dao.note_dao_pickle import NoteDAOPickle
 
 class Controller():
 	''' controller class that receives the system's operations '''
 
-	def __init__(self, autosave):
-		#self.autosave = False 
-		self.patient_dao = PatientDAOJSON()
-		self.note_dao = NoteDAOPickle()
+	def __init__(self, autosave=False):
+		self.autosave = autosave 
+		self.patient_dao = PatientDAOJSON(autosave=False)
+		#self.note_dao = NoteDAOPickle()
 		self.users = {"user" : "123456","ali" : "@G00dPassw0rd"}
 		self.username = None
 		self.password = None

@@ -17,11 +17,11 @@ class Controller():
 	def __init__(self, autosave=False):
 		self.autosave = autosave 
 		self.logged = False
-		self.patient_dao = PatientDAOJSON(self.logged, self.autosave)
-		self.note_dao = NoteDAOPickle(self.logged, self.autosave)
+		self.patient_dao = PatientDAOJSON(self.autosave)
 		self.users = {"user" : "123456","ali" : "@G00dPassw0rd"}
 		self.username = None
 		self.password = None
+		self.current_patient = self.patient_dao.current_patient
 	
 	def login(self, username, password):
 		''' user logs in the system '''
@@ -32,8 +32,6 @@ class Controller():
 				self.username = username
 				self.password = password
 				self.logged = True
-				self.patient_dao.logged = True  # Update DAO logged state
-				self.note_dao.logged = True  # Update DAO logged state
 				return True
 			else:
 				raise InvalidLoginException
@@ -49,117 +47,117 @@ class Controller():
 			self.password = None
 			self.logged = False
 			self.current_patient = None
-			self.patient_dao.logged = False  # Update DAO logged state
-			self.note_dao.logged = False  # Update DAO logged state
 			return True
 
 	def search_patient(self, phn):
-		try:
-			return self.patient_dao.search_patient(phn)
-		except IllegalAccessException as e:
-			pass
+		if not self.logged:
+			raise IllegalAccessException
+		return self.patient_dao.search_patient(phn)
 
 
 	def create_patient(self, phn, name, birth_date, phone, email, address):
-		try:
-			return self.patient_dao.create_patient(phn, name, birth_date, phone, email, address)
-		except IllegalAccessException as e:
-			pass
-		except IllegalOperationException as e:
-			pass
+		if not self.logged:
+			raise IllegalAccessException
+		if self.search_patient(phn):
+			raise IllegalOperationException
+		return self.patient_dao.create_patient(phn, name, birth_date, phone, email, address)
 
 	def retrieve_patients(self, name):
-		try:
-			return self.patient_dao.retrieve_patients(name)
-		except IllegalAccessException as e:
-			pass
+		if not self.logged:
+			raise IllegalAccessException
+		return self.patient_dao.retrieve_patients(name)
 
 	def update_patient(self, original_phn, phn, name, birth_date, phone, email, address):
-		try: 
-			return self.patient_dao.update_patient(original_phn, phn, name, birth_date, phone, email, address)
-		except IllegalAccessException as e:
-			pass
-		except IllegalOperationException as e:
-			pass
-			
+		# first, search the patient by key
+		patient = self.search_patient(original_phn)
+		# patient does not exist, cannot update
+		if not patient:
+			raise IllegalOperationException
+		# check if the new phn is taken by a different patient
+		if phn != original_phn and self.search_patient(phn):
+			raise IllegalOperationException
+		# patient is current patient, cannot update
+		if self.current_patient and patient == self.current_patient:
+			raise IllegalOperationException
+		# patient is current patient, cannot update
+		if self.current_patient:
+			if patient == self.current_patient:
+				raise IllegalOperationException
+		return self.patient_dao.update_patient(original_phn, phn, name, birth_date, phone, email, address)
+
 	def delete_patient(self, phn):
-		try:
-			return self.patient_dao.delete_patient(phn)
-		except IllegalOperationException as e:
-			pass
-		except IllegalAccessException as e:
-			pass
+		if not self.logged:
+			raise IllegalAccessException
+		if not self.search_patient(phn):
+			raise IllegalOperationException
+		if self.current_patient or self.search_patient(phn) == self.current_patient:
+			raise IllegalOperationException
+		return self.patient_dao.delete_patient(phn)
 
 	def list_patients(self):
-		try: 
-			return self.patient_dao.list_patients()
-		except IllegalAccessException as e:
-			pass
+		if not self.logged:
+			raise IllegalAccessException
+		return self.patient_dao.list_patients()
 
 	def set_current_patient(self, phn):
-		try:
-			return self.patient_dao.set_current_patient(phn)
-		except IllegalAccessException as e:
-			pass
-		except IllegalOperationException as e:
-			pass
+		if not self.logged:
+			raise IllegalAccessException
+		if not self.search_patient(phn):
+			raise IllegalOperationException
+		return self.patient_dao.set_current_patient(phn)
 
 	def get_current_patient(self):
-		try:
-			return self.patient_dao.get_current_patient()
-		except IllegalAccessException as e:
-			pass
+		if not self.logged:
+			raise IllegalAccessException
+		return self.patient_dao.get_current_patient()
 
 	def unset_current_patient(self):
-		try:
-			return self.patient_dao.unset_current_patient()
-		except IllegalAccessException as e:
-			pass
+		if not self.logged:
+			raise IllegalAccessException
+		return self.patient_dao.unset_current_patient()
 
 	def search_note(self, code):
-		try:
-			return self.note_dao.search_note(code)
-		except IllegalAccessException as e:
-			pass
-		except NoCurrentPatientException as e:
-			pass
+		if not self.logged:
+			raise IllegalAccessException
+		if not self.current_patient:
+			raise NoCurrentPatientException
+		return self.note_dao.search_note(code)
+
 
 	def create_note(self, text):
-		try: 
-			return self.note_dao.create_note(text)
-		except IllegalAccessException as e:
-			pass
-		except NoCurrentPatientException as e:
-			pass
+		if not self.logged:
+			raise IllegalAccessException
+		if not self.current_patient:
+			raise NoCurrentPatientException
+		return self.note_dao.create_note(text)
+		
 
 	def retrieve_notes(self, search_string):
-		try:
-			return self.note_dao.retrieve_notes(search_string)
-		except IllegalAccessException as e:
-			pass
-		except NoCurrentPatientException as e:
-			pass
+		if not self.logged:
+			raise IllegalAccessException
+		if not self.current_patient:
+			raise NoCurrentPatientException
+		return self.note_dao.retrieve_notes(search_string)
+		
 
 	def update_note(self, code, new_text):
-		try:
-			return self.note_dao.update_note(code, new_text)
-		except IllegalAccessException as e:
-			pass
-		except NoCurrentPatientException as e:
-			pass
+		if not self.logged:
+			raise IllegalAccessException
+		if not self.current_patient:
+			raise NoCurrentPatientException
+		return self.note_dao.update_note(code, new_text)
 
 	def delete_note(self, code):
-		try:
-			return self.note_dao.delete_note(code)
-		except IllegalAccessException as e:
-			pass
-		except NoCurrentPatientException as e:
-			pass
+		if not self.logged:
+			raise IllegalAccessException
+		if not self.current_patient:
+			raise NoCurrentPatientException
+		return self.note_dao.delete_note(code)
+		
 
 	def list_notes(self):
-		try: 
-			return self.note_dao.list_notes()
-		except IllegalAccessException as e:
-			pass
-		except NoCurrentPatientException as e:
-			pass
+		if not self.logged:
+			raise IllegalAccessException
+		if not self.current_patient:
+			raise NoCurrentPatientException
+		return self.note_dao.list_notes()

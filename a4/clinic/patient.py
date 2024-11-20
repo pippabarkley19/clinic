@@ -3,7 +3,7 @@ from clinic.patient_record import PatientRecord
 class Patient():
 	''' class that represents a patient '''
 
-	def __init__(self, phn, name, birth_date, phone, email, address):
+	def __init__(self, phn, name, birth_date, phone, email, address, autosave=False):
 		''' constructs a patient '''
 		self.phn = phn
 		self.name = name
@@ -11,8 +11,9 @@ class Patient():
 		self.phone = phone
 		self.email = email
 		self.address = address
+		self.autosave = autosave
 		
-		self.record = PatientRecord(self.logged, self.autosave)
+		self.record = PatientRecord(self.autosave)
 
 	def get_patient_record(self):
 		''' get the patient's record '''

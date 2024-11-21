@@ -6,9 +6,11 @@ from clinic.dao.note_dao_pickle import NoteDAOPickle
 class PatientRecord():
 	''' class that represents a patient's medical record '''
 
-	def __init__(self, autosave=False):
+	def __init__(self, autosave=False, phn=None):
 		self.autosave = autosave
-		self.note_dao = NoteDAOPickle(self.autosave)
+		self.phn = phn
+		self.note_dao = NoteDAOPickle(self.autosave, self.phn)
+		
 		#self.patient_dao = PatientDAOJSON()
 	
 	def search_note(self, code):

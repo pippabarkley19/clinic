@@ -13,7 +13,7 @@ class Patient():
 		self.address = address
 		self.autosave = autosave
 		
-		self.record = PatientRecord(self.autosave)
+		self.record = PatientRecord(self.autosave, self.phn)
 
 	def get_patient_record(self):
 		''' get the patient's record '''

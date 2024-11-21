@@ -69,28 +69,6 @@ class PatientDAOJSON(PatientDAO):
 			patients_list.append(patient)
 		return patients_list
 
-	def set_current_patient(self, phn):
-		''' user sets the current patient '''
-
-		# first, search the patient by key
-		patient = self.patients.get(phn)
-		self.note_dao.current_patient = patient
-
-		# patient exists, set them to be the current patient
-		self.current_patient = patient
 
 
-	def get_current_patient(self):
-		''' get the current patient '''
-		if not isinstance(self.current_patient, Patient):
-			return None
-
-		# return current patient
-		return self.current_patient
-
-	def unset_current_patient(self):
-		''' unset the current patient '''
-		# unset current patient
-		self.current_patient = None
-
-
+	

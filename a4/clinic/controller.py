@@ -105,16 +105,29 @@ class Controller():
 			raise IllegalAccessException
 		if not self.search_patient(phn):
 			raise IllegalOperationException
-		self.current_patient = self.search_patient(phn)
+		# first, search the patient by key
+		patient = self.search_patient(phn)
+		#self.note_dao.current_patient = patient
 
+		# patient exists, set them to be the current patient
+		self.current_patient = patient
+		#self.current_patient = self.search_patient(phn)
+	
 	def get_current_patient(self):
 		if not self.logged:
 			raise IllegalAccessException
+		if not isinstance(self.current_patient, Patient):
+			return None
+
+		# return current patient
 		return self.current_patient
 
 	def unset_current_patient(self):
+		''' unset the current patient '''
+		# unset current patient
 		if not self.logged:
 			raise IllegalAccessException
+		self.current_patient = None
 		self.current_patient = None
 
 	def search_note(self, code):
@@ -122,14 +135,14 @@ class Controller():
 			raise IllegalAccessException
 		if not self.current_patient:
 			raise NoCurrentPatientException
-		return self.note_dao.search_note(code)
+		return self.current_patient.get_patient_record().search_note(code)
 
 	def create_note(self, text):
 		if not self.logged:
 			raise IllegalAccessException
 		if not self.current_patient:
 			raise NoCurrentPatientException
-		return self.note_dao.create_note(text)
+		return self.current_patient.get_patient_record().create_note(text)
 		
 
 	def retrieve_notes(self, search_string):
@@ -137,7 +150,7 @@ class Controller():
 			raise IllegalAccessException
 		if not self.current_patient:
 			raise NoCurrentPatientException
-		return self.note_dao.retrieve_notes(search_string)
+		return self.current_patient.get_patient_record().retrieve_notes(search_string)
 		
 
 	def update_note(self, code, new_text):
@@ -145,14 +158,14 @@ class Controller():
 			raise IllegalAccessException
 		if not self.current_patient:
 			raise NoCurrentPatientException
-		return self.note_dao.update_note(code, new_text)
+		return self.current_patient.get_patient_record().update_note(code, new_text)
 
 	def delete_note(self, code):
 		if not self.logged:
 			raise IllegalAccessException
 		if not self.current_patient:
 			raise NoCurrentPatientException
-		return self.note_dao.delete_note(code)
+		return self.current_patient.get_patient_record().delete_note(code)
 		
 
 	def list_notes(self):
@@ -160,4 +173,4 @@ class Controller():
 			raise IllegalAccessException
 		if not self.current_patient:
 			raise NoCurrentPatientException
-		return self.note_dao.list_notes()
+		return self.current_patient.get_patient_record().list_notes()

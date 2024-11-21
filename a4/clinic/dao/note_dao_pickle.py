@@ -3,11 +3,12 @@ from clinic.note import Note
 
 class NoteDAOPickle(NoteDAO):
 
-	def __init__(self, autosave=False):
+	def __init__(self, autosave=False, phn=None):
 		''' construct a patient record '''
 		self.counter = 0
 		self.notes = []
 		self.autosave = autosave
+		self.phn = phn
 
 	def search_note(self, code):
 		''' user searches a note from the current patient's record '''

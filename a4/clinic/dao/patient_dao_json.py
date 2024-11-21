@@ -1,9 +1,6 @@
 
 from clinic.patient import Patient
-from clinic.patient_record import PatientRecord
 from clinic.dao.patient_dao import PatientDAO
-from clinic.dao.note_dao_pickle import NoteDAOPickle
-#from clinic.note import Note
 
 class PatientDAOJSON(PatientDAO):
 
@@ -15,7 +12,6 @@ class PatientDAOJSON(PatientDAO):
 		self.autosave = autosave 
 		self.patients = {}
 		self.current_patient = None
-		self.note_dao = NoteDAOPickle(self.autosave)
 
 	def search_patient(self, phn):
 		''' user searches a patient '''

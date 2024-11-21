@@ -1,8 +1,5 @@
 from clinic.patient import Patient
-from clinic.note import Note
 from clinic.dao.patient_dao_json import PatientDAOJSON
-from clinic.dao.note_dao_pickle import NoteDAOPickle
-
 
 from clinic.exception.invalid_login_exception import InvalidLoginException
 from clinic.exception.duplicate_login_exception import DuplicateLoginException
@@ -17,14 +14,17 @@ class Controller():
 	def __init__(self, autosave=False):
 		self.autosave = autosave 
 		self.logged = False
+		# crucially creates the link to the PatientDAOJSON object to allow self.patient_dao to transfer control to DAO
 		self.patient_dao = PatientDAOJSON(self.autosave)
 		self.users = {"user" : "123456","ali" : "@G00dPassw0rd"}
 		self.username = None
 		self.password = None
+		# current patient is initialized here and set/get/unset methods are in controller too
 		self.current_patient = None
 	
 	def login(self, username, password):
 		''' user logs in the system '''
+		# no changes to this method from A3
 		if self.logged:
 			raise DuplicateLoginException
 		if username in self.users:
@@ -40,6 +40,7 @@ class Controller():
 
 	def logout(self):
 		''' user logs out from the system '''
+		# no changes to this method from A3
 		if not self.logged:
 			raise InvalidLogoutException
 		else:
@@ -50,6 +51,8 @@ class Controller():
 			return True
 
 	def search_patient(self, phn):
+		# all methods from here forward will check exception conditions and throw them accordingly
+		# if the exceptions are not thrown, return the call passing control to DAO
 		if not self.logged:
 			raise IllegalAccessException
 		return self.patient_dao.search_patient(phn)
@@ -68,18 +71,13 @@ class Controller():
 		return self.patient_dao.retrieve_patients(name)
 
 	def update_patient(self, original_phn, phn, name, birth_date, phone, email, address):
-		# first, search the patient by key
 		patient = self.search_patient(original_phn)
-		# patient does not exist, cannot update
 		if not patient:
 			raise IllegalOperationException
-		# check if the new phn is taken by a different patient
 		if phn != original_phn and self.search_patient(phn):
 			raise IllegalOperationException
-		# patient is current patient, cannot update
 		if self.current_patient and patient == self.current_patient:
 			raise IllegalOperationException
-		# patient is current patient, cannot update
 		if self.current_patient:
 			if patient == self.current_patient:
 				raise IllegalOperationException
@@ -105,26 +103,19 @@ class Controller():
 			raise IllegalAccessException
 		if not self.search_patient(phn):
 			raise IllegalOperationException
-		# first, search the patient by key
 		patient = self.search_patient(phn)
-		#self.note_dao.current_patient = patient
 
-		# patient exists, set them to be the current patient
 		self.current_patient = patient
-		#self.current_patient = self.search_patient(phn)
 	
 	def get_current_patient(self):
 		if not self.logged:
 			raise IllegalAccessException
 		if not isinstance(self.current_patient, Patient):
 			return None
-
-		# return current patient
 		return self.current_patient
 
 	def unset_current_patient(self):
 		''' unset the current patient '''
-		# unset current patient
 		if not self.logged:
 			raise IllegalAccessException
 		self.current_patient = None
@@ -135,6 +126,7 @@ class Controller():
 			raise IllegalAccessException
 		if not self.current_patient:
 			raise NoCurrentPatientException
+		# crucial: all note methods pass current_patient.get_patient_record() to the call to note methods in order to pass current_patient
 		return self.current_patient.get_patient_record().search_note(code)
 
 	def create_note(self, text):

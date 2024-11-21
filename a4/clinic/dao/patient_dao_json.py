@@ -25,7 +25,9 @@ class PatientDAOJSON(PatientDAO):
 
 	def retrieve_patients(self, name):
 		''' user retrieves the patients that satisfy a search criterion '''
+		# creates empty list for retrieved patients
 		retrieved_patients = []
+		# loop through all patients, check name and patient.name, if they match, append to output list
 		for patient in self.patients.values():
 			if name in patient.name:
 				retrieved_patients.append(patient)
@@ -60,7 +62,9 @@ class PatientDAOJSON(PatientDAO):
 
 	def list_patients(self):
 		''' user lists all patients '''
+		# creates empty list to store patients
 		patients_list = []
+		# loops through patients and for each instance add it to the list
 		for patient in self.patients.values():
 			patients_list.append(patient)
 		return patients_list

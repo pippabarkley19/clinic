@@ -13,7 +13,7 @@ class NoteDAOPickle(NoteDAO):
 
 	def search_note(self, code):
 		''' user searches a note from the current patient's record '''
-		# search a new note with the given code and return it 
+		# search a new note with the given code and return  it 
 		for note in self.notes:
 			if note.code == code:
 				return note

@@ -34,7 +34,8 @@ class LoginWindow(QWidget):
         try:
             if self.controller.login(username, password):
                 self.success_login()
+                self.show_patient_window()
         except Exception as e:
             QMessageBox.critical(self, "Login failed, please try again")
-            self.username_input.clear()
-            self.password_input.clear()
+        self.username_input.clear()
+        self.password_input.clear()

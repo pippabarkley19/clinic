@@ -2,10 +2,10 @@ import sys
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedWidget
 
-from controller import Controller  # Assuming this is where your Controller class is
-from login_window import LoginWindow
-from patient_window import PatientWindow
-from appointment_window import AppointmentWindow
+from clinic.controller import Controller  # Assuming this is where your Controller class is
+from clinic.gui.login_window import LoginWindow
+from clinic.gui.patient_window import PatientWindow
+from clinic.gui.appointment_window import AppointmentWindow
 
 class ClinicGUI(QMainWindow):
 

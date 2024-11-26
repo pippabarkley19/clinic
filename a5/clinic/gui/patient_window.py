@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QHBoxLayout, QTableView, QStandardItem, QStandardItemModel)
+    QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QHBoxLayout, QTableView)
+from PyQt6.QtGui import QStandardItem, QStandardItemModel
 from clinic.patient import Patient 
 
 from PyQt6.QtCore import Qt
@@ -8,15 +9,11 @@ class PatientWindow(QWidget):
     def __init__(self, switch_to_appointment_window, switch_to_login_window, controller):
         super().__init__()
 
-from controller import Controller  # Assuming this is where your Controller class is
         self.switch_to_appointment_window = switch_to_appointment_window
         self.switch_to_login_window = switch_to_login_window
         self.controller = controller
 
         self.setWindowTitle("Patient Management")
-
-from controller import Controller  # Assuming this is where your Controller class is
-from controller import Controller  # Assuming this is where your Controller class is
         # Main layout
         layout = QVBoxLayout()
 
@@ -40,7 +37,6 @@ from controller import Controller  # Assuming this is where your Controller clas
         self.email_input = QLineEdit()
         self.address_label = QLabel("Address:")
         self.address_input = QLineEdit()
-  from controller import Controller  # Assuming this is where your Controller class is
       # add create patient widgets to layout
         layout.addWidget(self.phn_label)
         layout.addWidget(self.phn_input)

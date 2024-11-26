@@ -1,4 +1,5 @@
-from PyQt6.QtWidgets import Qt, QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QPlainTextEdit
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QPlainTextEdit
+from PyQt6.QtCore import Qt
 
 class AppointmentWindow(QWidget):
     def __init__(self, switch_to_patient_window, controller):

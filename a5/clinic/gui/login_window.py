@@ -6,6 +6,7 @@ class LoginWindow(QWidget):
         self.setWindowTitle("Login")
         self.success_login = success_login
         self.controller = controller
+        self.setFixedSize(400,200)
 
         layout = QVBoxLayout()
 
@@ -28,14 +29,22 @@ class LoginWindow(QWidget):
         self.setLayout(layout)
 
     def handle_login(self):
-        username = self.username_input.text()
-        password = self.password_input.text()
         
+        username = self.username_input.text().strip()
+        password = self.password_input.text().strip()
         try:
-            if self.controller.login(username, password):
-                self.success_login()
-                self.show_patient_window()
+            users = self.controller.load_users()
+            if username in users:
+                hashed_password = self.controller.get_password_hash(password)
+                if users[username] == hashed_password:
+                    self.success_login()
+                    self.show_patient_window()
+                    self.controller.logged = True
+                else:
+                    QMessageBox.warning(self, "Login failed", "Invalid Password")
+            else:
+                QMessageBox.warning(self, "Login failed", "Username not found")
         except Exception as e:
-            QMessageBox.critical(self, "Login failed, please try again")
+            QMessageBox.critical(self, "login failed", "please try again")
         self.username_input.clear()
         self.password_input.clear()

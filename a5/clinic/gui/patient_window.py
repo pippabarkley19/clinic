@@ -1,19 +1,18 @@
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QHBoxLayout, QTableView)
-from PyQt6.QtGui import QStandardItem, QStandardItemModel
+    QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QHBoxLayout, QTableView, QStandardItem, QStandardItemModel)
 from clinic.patient import Patient 
 
 from PyQt6.QtCore import Qt
 
 class PatientWindow(QWidget):
     def __init__(self, switch_to_appointment_window, switch_to_login_window, controller):
-        super().__init__()
-
+        super().__init__
         self.switch_to_appointment_window = switch_to_appointment_window
         self.switch_to_login_window = switch_to_login_window
         self.controller = controller
 
         self.setWindowTitle("Patient Management")
+
         # Main layout
         layout = QVBoxLayout()
 
@@ -37,6 +36,7 @@ class PatientWindow(QWidget):
         self.email_input = QLineEdit()
         self.address_label = QLabel("Address:")
         self.address_input = QLineEdit()
+
       # add create patient widgets to layout
         layout.addWidget(self.phn_label)
         layout.addWidget(self.phn_input)
@@ -80,10 +80,6 @@ class PatientWindow(QWidget):
         layout.addWidget(self.retrieve_table)
 
         # update patient
-        self.update_label = QLabel("Update Patient by entering their PHN and updating the necessary fields")
-        self.original_phn_label = QLabel("Original PHN:")
-        self.original_phn = QLineEdit()
-        self.update_phn_label = QLabel("PHN:")
         self.update_phn_input = QLineEdit()
         self.update_name_label = QLabel("Name:")
         self.update_name_input = QLineEdit()
@@ -155,18 +151,16 @@ class PatientWindow(QWidget):
         email = self.email_input.text()
         address = self.address_input.text()
 
-        new_patient = Patient(phn, name, birthday, phone, email, address)
-
         if not all([phn, name, birthday, phone, email, address]):
             QMessageBox.warning(self, "Input Error", "All fields must be filled!")
             return
 
         try:
-            self.controller.create_patient(new_patient)
+            self.controller.create_patient(phn, name, birthday, phone, email, address)
             QMessageBox.information(self, "Success", f"Patient {name} created successfully!")
-            self.clear_create_fields()
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
+        self.clear_create_fields()
 
     def clear_create_fields(self):
         """Clear all input fields."""
@@ -189,11 +183,8 @@ class PatientWindow(QWidget):
                 QMessageBox.information(
                     self,
                     "Patient Found",
-                    f"Patient Details:\nPHN: {patient['phn']}\n"
-                    f"Name: {patient['name']}\nBirthday: {patient['birthday']}\n"
-                    f"Phone: {patient['phone']}\nEmail: {patient['email']}\n"
-                    f"Address: {patient['address']}",
-                )
+                    f"Patient Details:\nPHN: {patient.phn}\n"
+                    f"Name: {patient.name}")
             else:
                 QMessageBox.warning(self, "Not Found", "No patient found with the given PHN.")
         except Exception as e:
@@ -201,24 +192,28 @@ class PatientWindow(QWidget):
         self.search_input.clear()
 
     def retrieve_patient(self):
-        phn = self.retrieve_input.text()
-        patient = self.controller.search_patient(phn)
+        name = self.retrieve_input.text()
+        patients = self.controller.retrieve_patients(name)
 
-        if not phn:
-            QMessageBox.warning(self, "Input Error", "PHN must be filled!")
+        if not name:
+            QMessageBox.warning(self, "Input Error", "name must be filled!")
             return
 
         """Populate the QTableView with the retrieved patient data."""
-        model = QStandardItemModel(1, 6)  # 1 row, 6 columns for patient details
+        model = QStandardItemModel(len(patients), 6)  # 1 row, 6 columns for patient details
         model.setHorizontalHeaderLabels(["PHN", "Name", "Birthday", "Phone", "Email", "Address"])
 
-        if patient: 
-            for col, value in enumerate(patient):
-                item = QStandardItem(str(value))
-                model.setItem(0, col, item)
+        if patients: 
+            for row, patient in enumerate(patients):
+                model.setItem(row, 0, QStandardItem(str(patient.phn)))  # Use 'patient.phn'
+                model.setItem(row, 1, QStandardItem(str(patient.name)))  # Use 'patient.name'
+                model.setItem(row, 2, QStandardItem(str(patient.birth_date)))  # Use 'patient.birthday'
+                model.setItem(row, 3, QStandardItem(str(patient.phone)))  # Use 'patient.phone'
+                model.setItem(row, 4, QStandardItem(str(patient.email)))  # Use 'patient.email'
+                model.setItem(row, 5, QStandardItem(str(patient.address))) #Use 'patient.address' 
         else:
-            QMessageBox.warning(self, "Not Found", "No patient found with the given PHN.")
-        self.patient_table.setModel(model)
+            QMessageBox.warning(self, "Not Found", "No patient found with the given name.")
+        self.retrieve_table.setModel(model)
 
     def update_patient(self):
         original_phn = self.original_phn.text()
@@ -259,6 +254,10 @@ class PatientWindow(QWidget):
             return
         try:
             self.controller.delete_patient(phn)
+            QMessageBox.information(self, "Patient successfully deleted")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", str(e))
+        self.clear_delete_fields()
             QMessageBox.information(self, "Patient successfully deleted")
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))

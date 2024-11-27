@@ -18,7 +18,7 @@ class AppointmentWindow(QWidget):
         end_appt_layout = QHBoxLayout()
         self.back_button = QPushButton("End Appointment")
         self.back_button.clicked.connect(self.end_appointment)
-        end_appt_layout.addWidget(self.logout_button, alignment=Qt.AlignmentFlag.AlignRight)
+        end_appt_layout.addWidget(self.back_button, alignment=Qt.AlignmentFlag.AlignRight)
         layout.addWidget(self.back_button)
 
         # set current patient content

@@ -1,12 +1,12 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox
 
 class LoginWindow(QWidget):
-    def __init__(self, controller, success_login):
+    def __init__(self, controller, switch_to_patient_window):
         super().__init__()
         self.setWindowTitle("Login")
-        self.success_login = success_login
         self.controller = controller
-        self.setFixedSize(400,200)
+        self.setFixedSize(1000, 1000)
+        self.switch_to_patient_window = switch_to_patient_window
 
         layout = QVBoxLayout()
 
@@ -37,14 +37,13 @@ class LoginWindow(QWidget):
             if username in users:
                 hashed_password = self.controller.get_password_hash(password)
                 if users[username] == hashed_password:
-                    self.success_login()
-                    self.show_patient_window()
+                    self.switch_to_patient_window()
                     self.controller.logged = True
                 else:
                     QMessageBox.warning(self, "Login failed", "Invalid Password")
             else:
                 QMessageBox.warning(self, "Login failed", "Username not found")
         except Exception as e:
-            QMessageBox.critical(self, "login failed", "please try again")
+            QMessageBox.critical(self, "login failed", str(e))
         self.username_input.clear()
         self.password_input.clear()

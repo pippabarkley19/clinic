@@ -11,9 +11,8 @@ class PatientWindow(QWidget):
         self.switch_to_appointment_window = switch_to_appointment_window
         self.switch_to_login_window = switch_to_login_window
         self.controller = controller
+        self.setFixedSize(1000,2000)
         self.controller.logged = True
-
-        self.setFixedSize(1000, 1000)
 
         self.setWindowTitle("Patient Management")
 
@@ -26,6 +25,7 @@ class PatientWindow(QWidget):
         self.logout_button.clicked.connect(self.logout)
         logout_layout.addWidget(self.logout_button, alignment=Qt.AlignmentFlag.AlignRight)
         layout.addLayout(logout_layout)
+
         # fields for create patient
         self.phn_label = QLabel("PHN:")
         self.phn_input = QLineEdit()
@@ -53,6 +53,7 @@ class PatientWindow(QWidget):
         layout.addWidget(self.email_input)
         layout.addWidget(self.address_label)
         layout.addWidget(self.address_input)
+
         # add create patient button from 'PyQt6.QtWidgets' 
         self.create_button = QPushButton("Create Patient")
         self.create_button.clicked.connect(self.create_patient)
@@ -225,7 +226,6 @@ class PatientWindow(QWidget):
 
     def update_patient(self):
         original_phn = self.original_phn_input.text()
-        original_patient = self.controller.search_patient(original_phn)
         phn = self.update_phn_input.text()
         name = self.update_name_input.text()
         birthday = self.update_birthday_input.text()
@@ -238,8 +238,8 @@ class PatientWindow(QWidget):
             return
 
         try:
-            if original_patient:
-                self.controller.update_patient(original_patient, phn, name, birthday, phone, email, address)
+            if original_phn:
+                self.controller.update_patient(original_phn, phn, name, birthday, phone, email, address)
                 QMessageBox.information(self, "Success", f"Patient {name} updated successfully!")
             else:
                 QMessageBox.warning(self, "Patient with given PHN does not exist")
@@ -248,6 +248,7 @@ class PatientWindow(QWidget):
             QMessageBox.critical(self, "Error", str(e))
 
     def clear_update_fields(self):
+        self.original_phn_input.clear()
         self.update_phn_input.clear()
         self.update_name_input.clear()
         self.update_birthday_input.clear()

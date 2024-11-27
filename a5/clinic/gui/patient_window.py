@@ -1,15 +1,19 @@
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QHBoxLayout, QTableView, QStandardItem, QStandardItemModel)
+    QWidget, QScrollArea, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QHBoxLayout, QTableView)
+from PyQt6.QtGui import QStandardItem, QStandardItemModel
 from clinic.patient import Patient 
 
 from PyQt6.QtCore import Qt
 
 class PatientWindow(QWidget):
     def __init__(self, switch_to_appointment_window, switch_to_login_window, controller):
-        super().__init__
+        super().__init__()
         self.switch_to_appointment_window = switch_to_appointment_window
         self.switch_to_login_window = switch_to_login_window
         self.controller = controller
+        self.controller.logged = True
+
+        self.setFixedSize(1000, 1000)
 
         self.setWindowTitle("Patient Management")
 
@@ -22,7 +26,6 @@ class PatientWindow(QWidget):
         self.logout_button.clicked.connect(self.logout)
         logout_layout.addWidget(self.logout_button, alignment=Qt.AlignmentFlag.AlignRight)
         layout.addLayout(logout_layout)
-
         # fields for create patient
         self.phn_label = QLabel("PHN:")
         self.phn_input = QLineEdit()
@@ -46,11 +49,11 @@ class PatientWindow(QWidget):
         layout.addWidget(self.birthday_input)
         layout.addWidget(self.phone_label)
         layout.addWidget(self.phone_input)
-        layout.addWidget(self.email_label)
+        layout.addWidget(self.email_label) 
         layout.addWidget(self.email_input)
         layout.addWidget(self.address_label)
         layout.addWidget(self.address_input)
-        # add create patient button
+        # add create patient button from 'PyQt6.QtWidgets' 
         self.create_button = QPushButton("Create Patient")
         self.create_button.clicked.connect(self.create_patient)
         layout.addWidget(self.create_button)
@@ -66,7 +69,7 @@ class PatientWindow(QWidget):
         layout.addWidget(self.search_input)
         layout.addWidget(self.search_button)
 
-        self.retrieve_label = QLabel("Enter a PHN to retreive a patient")
+        self.retrieve_label = QLabel("Enter a name to retreive a patient")
         self.retrieve_input = QLineEdit()
         self.retreive_button = QPushButton("Retreive a patient")
         self.retreive_button.clicked.connect(self.retrieve_patient)
@@ -80,6 +83,9 @@ class PatientWindow(QWidget):
         layout.addWidget(self.retrieve_table)
 
         # update patient
+        self.original_phn_label = QLabel("Enter original PHN:")
+        self.original_phn_input = QLineEdit()
+        self.update_phn_label = QLabel("Enter PHN:")
         self.update_phn_input = QLineEdit()
         self.update_name_label = QLabel("Name:")
         self.update_name_input = QLineEdit()
@@ -92,6 +98,8 @@ class PatientWindow(QWidget):
         self.update_address_label = QLabel("Address:")
         self.update_address_input = QLineEdit()
         # add create patient widgets to layout
+        layout.addWidget(self.original_phn_label)
+        layout.addWidget(self.original_phn_input)
         layout.addWidget(self.update_phn_label)
         layout.addWidget(self.update_phn_input)
         layout.addWidget(self.update_name_label)
@@ -216,7 +224,7 @@ class PatientWindow(QWidget):
         self.retrieve_table.setModel(model)
 
     def update_patient(self):
-        original_phn = self.original_phn.text()
+        original_phn = self.original_phn_input.text()
         original_patient = self.controller.search_patient(original_phn)
         phn = self.update_phn_input.text()
         name = self.update_name_input.text()

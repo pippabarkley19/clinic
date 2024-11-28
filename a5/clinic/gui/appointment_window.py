@@ -102,6 +102,7 @@ class AppointmentWindow(QWidget):
         self.note_input.clear()
 
     def retrieve_note(self):
+        self.note_display.clear()
         text = self.text_input.text()
 
         if not text:
@@ -159,6 +160,7 @@ class AppointmentWindow(QWidget):
         self.note_index_input.clear()
 
     def list_all_notes(self):
+        self.notes_display.clear()
         try:
             notes = self.controller.list_notes()
             if not notes:
@@ -171,8 +173,6 @@ class AppointmentWindow(QWidget):
                     f"Description: {note.text}\n"
                     f"Date: {note.timestamp.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
                 )
-
-            # Set the formatted notes in QPlainTextEdit
             self.notes_display.setPlainText(formatted_notes)
         except Exception as e:
             QMessageBox.warning(self, "Error", str(e))

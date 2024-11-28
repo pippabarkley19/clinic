@@ -6,6 +6,7 @@ from clinic.controller import Controller  # Assuming this is where your Controll
 from clinic.gui.login_window import LoginWindow
 from clinic.gui.patient_window import PatientWindow
 from clinic.gui.appointment_window import AppointmentWindow
+from clinic.gui.set_window import SetWindow
 
 class ClinicGUI(QMainWindow):
 
@@ -17,9 +18,9 @@ class ClinicGUI(QMainWindow):
         self.setCentralWidget(self.central_widget)
 
         self.login_window = LoginWindow(self.controller, self.show_patient_window)
-        self.patient_window = PatientWindow(self.show_appointment_window, self.show_login_window, self.controller)
-        self.appointment_window = AppointmentWindow(self.show_patient_window, self.controller)
-
+        self.patient_window = PatientWindow(self.show_set_window, self.show_login_window, self.controller)
+        self.appointment_window = AppointmentWindow(self.show_set_window, self.controller)
+        self.set_window = SetWindow(self.show_patient_window, self.show_appointment_window, self.controller)
 
         self.central_widget.addWidget(self.login_window)
         self.central_widget.addWidget(self.patient_window)
@@ -37,6 +38,9 @@ class ClinicGUI(QMainWindow):
 
     def show_login_window(self):
         self.central_widget.setCurrentWidget(self.login_window)
+
+    def show_set_window(self):
+        self.central_widget.setCurrentWidget(self.set_window)
 
 
 def main():

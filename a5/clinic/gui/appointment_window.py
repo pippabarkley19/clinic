@@ -2,12 +2,11 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QLab
 from PyQt6.QtCore import Qt
 
 class AppointmentWindow(QWidget):
-    def __init__(self, switch_to_patient_window, controller):
+    def __init__(self, switch_to_set_window, controller):
         super().__init__()
 
-        self.switch_to_patient_window = switch_to_patient_window
+        self.switch_to_set_window = switch_to_set_window
         self.controller = controller
-        self.current_patient = None
 
         self.setWindowTitle("Appointment Management")
 
@@ -20,17 +19,6 @@ class AppointmentWindow(QWidget):
         self.back_button.clicked.connect(self.end_appointment)
         end_appt_layout.addWidget(self.back_button, alignment=Qt.AlignmentFlag.AlignRight)
         layout.addWidget(self.back_button)
-
-        # set current patient content
-        self.set_patient_label = QLabel("Enter a PHN to begin the appointment")
-        self.set_patient_phn_label = QLabel("PHN:")
-        self.set_patient_phn_input = QLineEdit()
-        self.enter_phn_button = QPushButton("Start appointment")
-        self.enter_phn_button.clicked.connect(self.start_appointment)
-        layout.addWidget(self.set_patient_label)
-        layout.addWidget(self.set_patient_phn_label)
-        layout.addWidget(self.set_patient_phn_input)
-        layout.addWidget(self.enter_phn_button)
 
         #create note content
         self.create_label = QLabel("Create Note")
@@ -93,31 +81,10 @@ class AppointmentWindow(QWidget):
         self.list_notes_button.clicked.connect(self.list_all_notes)
 
         self.setLayout(layout)
-    
-    def start_appointment(self):
-        phn = self.set_patient_phn_input.text()
-
-        if not phn:
-            QMessageBox.warning(self, "Input Error", "PHN must be filled")
-            return
-        
-        patient = self.controller.search_patient(phn)
-
-        if not patient:
-            QMessageBox.warning(self, "Input Error", "Patient does not exist. End the appointment, create the patient, then come back to start an appointment.")
-            return
-        
-        try:
-            self.controller.set_current_patient(phn)
-            self.current_patient = patient
-            QMessageBox.information(self,"Success", "Appointment started")
-        except Exception as e:
-            QMessageBox.critical(self, "Error", str(e))
-        self.set_patient_phn_input.clear()
 
     def end_appointment(self):
-        self.current_patient = None
-        self.switch_to_patient_window()
+        self.controller.unset_current_patient()
+        self.switch_to_set_window()
     
     def create_note(self):
         text = self.note_input.text()

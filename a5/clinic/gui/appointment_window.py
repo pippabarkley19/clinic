@@ -36,7 +36,7 @@ class AppointmentWindow(QWidget):
         self.create_label = QLabel("Create Note")
         self.note_input_label = QLabel("Enter note text:")
         self.note_input = QLineEdit()
-        self.create_note_button = QPushButton()
+        self.create_note_button = QPushButton("Create Note")
         self.create_note_button.clicked.connect(self.create_note)
         layout.addWidget(self.create_label)
         layout.addWidget(self.note_input_label)
@@ -54,9 +54,9 @@ class AppointmentWindow(QWidget):
         layout.addWidget(self.text_input)
         layout.addWidget(self.ret_note_button)
          # PlainTextEdit for displaying patient details
-        self.patient_details_display = QPlainTextEdit()
-        self.patient_details_display.setReadOnly(True) # not sure if this is necessary 
-        layout.addWidget(self.patient_details_display)
+        self.note_display = QPlainTextEdit()
+        self.note_display.setReadOnly(True) # not sure if this is necessary 
+        layout.addWidget(self.note_display)
 
         # update note content
         self.update_label = QLabel("Update Note")
@@ -64,7 +64,7 @@ class AppointmentWindow(QWidget):
         self.note_key_input = QLineEdit()
         self.new_text_label = QLabel("New text:")
         self.new_text_input = QLineEdit()
-        self.update_button = QPushButton()
+        self.update_button = QPushButton("Update Note")
         layout.addWidget(self.update_label)
         layout.addWidget(self.note_key_label)
         layout.addWidget(self.note_key_input)
@@ -108,9 +108,9 @@ class AppointmentWindow(QWidget):
             return
         
         try:
-            self.controler.set_current_patient(phn)
+            self.controller.set_current_patient(phn)
             self.current_patient = patient
-            QMessageBox.information(self, "Appointment started")
+            QMessageBox.information(self,"Success", "Appointment started")
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
         self.set_patient_phn_input.clear()
@@ -123,14 +123,16 @@ class AppointmentWindow(QWidget):
         text = self.note_input.text()
 
         if not text:
-            QMessageBox.warning(self, "The note cannot be empty")
+            QMessageBox.warning(self,"Error", "The note cannot be empty")
             return
-        if self.current_patient == None:
-            QMessageBox.warning(self, "Set the current patient to perform any appointment actions")
+        if not self.current_patient:
+            QMessageBox.warning(self,"Error", "Set the current patient to perform any appointment actions")
         try:
             self.controller.create_note(text)
+            QMessageBox.information(self, "Success", "Note Created")
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
+        self.note_input.clear()
 
     def retrieve_note(self):
         text = self.text_input.text()

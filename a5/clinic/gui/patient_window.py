@@ -244,7 +244,7 @@ class PatientWindow(QWidget):
             return
         try:
             self.controller.delete_patient(phn)
-            QMessageBox.information(self, "Patient successfully deleted")
+            QMessageBox.information(self,"Success", "Patient successfully deleted")
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
         self.delete_phn_input.clear()

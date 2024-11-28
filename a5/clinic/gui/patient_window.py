@@ -224,9 +224,9 @@ class PatientWindow(QWidget):
                 QMessageBox.information(self, "Success", f"Patient {name} updated successfully!")
             else:
                 QMessageBox.warning(self, "Patient with given PHN does not exist")
-            self.clear_update_fields()
         except Exception as e:
             QMessageBox.critical(self, "Error", str(e))
+        self.clear_update_fields()
 
     def clear_update_fields(self):
         self.original_phn_input.clear()
@@ -264,7 +264,7 @@ class PatientWindow(QWidget):
             for row, patient in enumerate(patients):
                 model.setItem(row, 0, QStandardItem(patient.phn))
                 model.setItem(row, 1, QStandardItem(patient.name))
-                model.setItem(row, 2, QStandardItem(patient.birthday))
+                model.setItem(row, 2, QStandardItem(patient.birth_date))
                 model.setItem(row, 3, QStandardItem(patient.phone))
                 model.setItem(row, 4, QStandardItem(patient.email))
                 model.setItem(row, 5, QStandardItem(patient.address))

@@ -24,6 +24,7 @@ class ClinicGUI(QMainWindow):
 
         self.central_widget.addWidget(self.login_window)
         self.central_widget.addWidget(self.patient_window)
+        self.central_widget.addWidget(self.set_window)
         self.central_widget.addWidget(self.appointment_window)
 
         self.central_widget.setCurrentWidget(self.login_window)

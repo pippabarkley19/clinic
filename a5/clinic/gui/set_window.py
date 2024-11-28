@@ -22,6 +22,7 @@ class SetWindow(QWidget):
         layout.addWidget(self.phn_input_label)
         layout.addWidget(self.phn_input)
         layout.addWidget(self.phn_input_button)
+        self.setLayout(layout)
     
     def back_button(self):
         self.switch_to_patient_window()

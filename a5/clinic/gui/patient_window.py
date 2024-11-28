@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import (
-    QWidget, QScrollArea, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QHBoxLayout, QTableView)
+    QWidget, QScrollArea, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QHBoxLayout, QGridLayout, QTableView)
 from PyQt6.QtGui import QStandardItem, QStandardItemModel
 from clinic.patient import Patient 
 
@@ -11,7 +11,8 @@ class PatientWindow(QWidget):
         self.switch_to_appointment_window = switch_to_appointment_window
         self.switch_to_login_window = switch_to_login_window
         self.controller = controller
-        self.setFixedSize(1000,2000)
+        # commenting this out for now hoping that the box layout will fix this issue
+        #self.setFixedSize(1000,2000)
         self.controller.logged = True
 
         self.setWindowTitle("Patient Management")
@@ -19,7 +20,7 @@ class PatientWindow(QWidget):
         # Main layout
         layout = QVBoxLayout()
 
-        #logout button
+        #Logout button
         logout_layout = QHBoxLayout()
         self.logout_button = QPushButton("Logout")
         self.logout_button.clicked.connect(self.logout)
@@ -27,119 +28,99 @@ class PatientWindow(QWidget):
         layout.addLayout(logout_layout)
 
         # fields for create patient
-        self.phn_label = QLabel("PHN:")
-        self.phn_input = QLineEdit()
-        self.name_label = QLabel("Name:")
-        self.name_input = QLineEdit()
-        self.birthday_label = QLabel("Birthday (YYYY-MM-DD):")
-        self.birthday_input = QLineEdit()
-        self.phone_label = QLabel("Phone Number:")
-        self.phone_input = QLineEdit()
-        self.email_label = QLabel("Email:")
-        self.email_input = QLineEdit()
-        self.address_label = QLabel("Address:")
-        self.address_input = QLineEdit()
-
-      # add create patient widgets to layout
-        layout.addWidget(self.phn_label)
-        layout.addWidget(self.phn_input)
-        layout.addWidget(self.name_label)
-        layout.addWidget(self.name_input)
-        layout.addWidget(self.birthday_label)
-        layout.addWidget(self.birthday_input)
-        layout.addWidget(self.phone_label)
-        layout.addWidget(self.phone_input)
-        layout.addWidget(self.email_label) 
-        layout.addWidget(self.email_input)
-        layout.addWidget(self.address_label)
-        layout.addWidget(self.address_input)
-
-        # add create patient button from 'PyQt6.QtWidgets' 
+        create_layout = QGridLayout()
+        self.phn_input, self.name_input = QLineEdit(), QLineEdit()
+        self.birthday_input, self.phone_input = QLineEdit(), QLineEdit()
+        self.email_input, self.address_input = QLineEdit(), QLineEdit()
+        create_layout.addWidget(QLabel("PHN:"), 0, 0)
+        create_layout.addWidget(self.phn_input, 0, 1)
+        create_layout.addWidget(QLabel("Name:"), 1, 0)
+        create_layout.addWidget(self.name_input, 1, 1)
+        create_layout.addWidget(QLabel("Birthday (YYYY-MM-DD):"), 2, 0)
+        create_layout.addWidget(self.birthday_input, 2, 1)
+        create_layout.addWidget(QLabel("Phone Number:"), 3, 0)
+        create_layout.addWidget(self.phone_input, 3, 1)
+        create_layout.addWidget(QLabel("Email:"), 4, 0)
+        create_layout.addWidget(self.email_input, 4, 1)
+        create_layout.addWidget(QLabel("Address:"), 5, 0)
+        create_layout.addWidget(self.address_input, 5, 1)
+        # Create button
         self.create_button = QPushButton("Create Patient")
         self.create_button.clicked.connect(self.create_patient)
-        layout.addWidget(self.create_button)
+        create_layout.addWidget(self.create_button, 6, 0, 1, 2)
+        layout.addLayout(create_layout)
 
-        # search patient fields
-        self.search_label = QLabel("Search Patient by PHN:")
+        # Search Patient Section
+        search_layout = QGridLayout()
         self.search_input = QLineEdit()
-        #search patient button
+        search_layout.addWidget(QLabel("Search Patient by PHN:"), 0, 0)
+        search_layout.addWidget(self.search_input, 0, 1)
+        # Search button
         self.search_button = QPushButton("Search Patient")
         self.search_button.clicked.connect(self.search_patient)
-        # add search patient widgets
-        layout.addWidget(self.search_label)
-        layout.addWidget(self.search_input)
-        layout.addWidget(self.search_button)
+        search_layout.addWidget(self.search_button, 0, 2)
+        layout.addLayout(search_layout)
 
-        self.retrieve_label = QLabel("Enter a name to retreive a patient")
+        # Retrieve Patient Section
+        retrieve_layout = QGridLayout()
         self.retrieve_input = QLineEdit()
-        self.retreive_button = QPushButton("Retreive a patient")
-        self.retreive_button.clicked.connect(self.retrieve_patient)
-        layout.addWidget(self.retrieve_label)
-        layout.addWidget(self.retrieve_input)
-        layout.addWidget(self.retreive_button)
-
-        # table for retrieve 
+        retrieve_layout.addWidget(QLabel("Enter a name to retrieve a patient:"), 0, 0)
+        retrieve_layout.addWidget(self.retrieve_input, 0, 1)
+        # Retrieve button
+        self.retrieve_button = QPushButton("Retrieve Patient")
+        self.retrieve_button.clicked.connect(self.retrieve_patient)
+        retrieve_layout.addWidget(self.retrieve_button, 0, 2)
         self.retrieve_table = QTableView()
-        self.retrieve_table.setModel(QStandardItemModel())
-        layout.addWidget(self.retrieve_table)
+        retrieve_layout.addWidget(self.retrieve_table, 1, 0, 1, 3)
+        layout.addLayout(retrieve_layout)
 
-        # update patient
-        self.original_phn_label = QLabel("Enter original PHN:")
-        self.original_phn_input = QLineEdit()
-        self.update_phn_label = QLabel("Enter PHN:")
-        self.update_phn_input = QLineEdit()
-        self.update_name_label = QLabel("Name:")
-        self.update_name_input = QLineEdit()
-        self.update_birthday_label = QLabel("Birthday (YYYY-MM-DD):")
-        self.update_birthday_input = QLineEdit()
-        self.update_phone_label = QLabel("Phone Number:")
-        self.update_phone_input = QLineEdit()
-        self.update_email_label = QLabel("Email:")
-        self.update_email_input = QLineEdit()
-        self.update_address_label = QLabel("Address:")
+        # Update Patient Section
+        update_layout = QGridLayout()
+        self.original_phn_input, self.update_phn_input = QLineEdit(), QLineEdit()
+        self.update_name_input, self.update_birthday_input = QLineEdit(), QLineEdit()
+        self.update_phone_input, self.update_email_input = QLineEdit(), QLineEdit()
         self.update_address_input = QLineEdit()
-        # add create patient widgets to layout
-        layout.addWidget(self.original_phn_label)
-        layout.addWidget(self.original_phn_input)
-        layout.addWidget(self.update_phn_label)
-        layout.addWidget(self.update_phn_input)
-        layout.addWidget(self.update_name_label)
-        layout.addWidget(self.update_name_input)
-        layout.addWidget(self.update_birthday_label)
-        layout.addWidget(self.update_birthday_input)
-        layout.addWidget(self.update_phone_label)
-        layout.addWidget(self.update_phone_input)
-        layout.addWidget(self.update_email_label)
-        layout.addWidget(self.update_email_input)
-        layout.addWidget(self.update_address_label)
-        layout.addWidget(self.update_address_input)
-        # add create patient button
+        update_layout.addWidget(QLabel("Original PHN:"), 0, 0)
+        update_layout.addWidget(self.original_phn_input, 0, 1)
+        update_layout.addWidget(QLabel("PHN:"), 1, 0)
+        update_layout.addWidget(self.update_phn_input, 1, 1)
+        update_layout.addWidget(QLabel("Name:"), 2, 0)
+        update_layout.addWidget(self.update_name_input, 2, 1)
+        update_layout.addWidget(QLabel("Birthday (YYYY-MM-DD):"), 3, 0)
+        update_layout.addWidget(self.update_birthday_input, 3, 1)
+        update_layout.addWidget(QLabel("Phone:"), 4, 0)
+        update_layout.addWidget(self.update_phone_input, 4, 1)
+        update_layout.addWidget(QLabel("Email:"), 5, 0)
+        update_layout.addWidget(self.update_email_input, 5, 1)
+        update_layout.addWidget(QLabel("Address:"), 6, 0)
+        update_layout.addWidget(self.update_address_input, 6, 1)
+        # Update button
         self.update_button = QPushButton("Update Patient")
         self.update_button.clicked.connect(self.update_patient)
-        layout.addWidget(self.update_button)
+        update_layout.addWidget(self.update_button, 7, 0, 1, 2)
+        layout.addLayout(update_layout)
 
-        #delete patient content
-        self.delete_label = QLabel("Delete Patient")
-        self.delete_phn_label = QLabel("PHN:")
+        # Delete Patient Section
+        delete_layout = QGridLayout()
         self.delete_phn_input = QLineEdit()
-        layout.addWidget(self.delete_label)
-        layout.addWidget(self.delete_phn_label)
-        layout.addWidget(self.delete_phn_input)
+        delete_layout.addWidget(QLabel("PHN:"), 0, 0)
+        delete_layout.addWidget(self.delete_phn_input, 0, 1)
+        # Delete button
         self.delete_button = QPushButton("Delete Patient")
         self.delete_button.clicked.connect(self.delete_patient)
-        layout.addWidget(self.delete_button)
+        delete_layout.addWidget(self.delete_button, 1, 0, 1, 2)
+        layout.addLayout(delete_layout)
 
-        # list all patients content
+        # List Patients Section
+        # List Button
         self.list_button = QPushButton("List All Patients")
         self.list_button.clicked.connect(self.list_patients)
         layout.addWidget(self.list_button)
-
-        # QTableView for listing patients
         self.patient_table = QTableView()
-        self.patient_table.setModel(QStandardItemModel())  # Empty model initially
+        self.patient_table.setModel(QStandardItemModel())
         layout.addWidget(self.patient_table)
 
-        # appointment window
+        # Appointment Button
         self.appointment_button = QPushButton("Create Appointment")
         self.appointment_button.clicked.connect(self.new_appointment)
         layout.addWidget(self.appointment_button)

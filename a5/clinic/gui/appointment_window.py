@@ -143,7 +143,6 @@ class AppointmentWindow(QWidget):
         except Exception as e:
             QMessageBox.warning(self, "Error", str(e))
         self.note_key_input.clear()
-        self.new_text_input.clear()
 
     def delete_note(self):
         index = self.note_index_input.text()
@@ -153,7 +152,9 @@ class AppointmentWindow(QWidget):
             return
         
         try:
-            self.controller.delete_note(index)
+            self.controller.delete_note(int(index))
+            self.note_display.clear()
+            self.notes_display.clear()
             QMessageBox.information(self, "Success", "Note successfully deleted")
         except Exception as e:
             QMessageBox.warning(self, "Error", str(e))

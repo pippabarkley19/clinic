@@ -14,7 +14,7 @@ from json import loads, dumps
 class Controller():
 	''' controller class that receives the system's operations '''
 
-	def __init__(self, autosave=False):
+	def __init__(self, autosave=True):
 		''' construct a controller class '''
 
 		self.autosave = autosave

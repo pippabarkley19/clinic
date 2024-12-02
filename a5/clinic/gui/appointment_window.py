@@ -7,12 +7,14 @@ class AppointmentWindow(QWidget):
 
         self.switch_to_set_window = switch_to_set_window
         self.controller = controller
-
+        current_patient = self.controller.current_patient
         self.setWindowTitle("Appointment Management")
 
         # Main layout
         layout = QVBoxLayout()
 
+        # who is the current patient
+        #self.current_patient_label = QLabel(f"Current patient is: {self.current_patient.name} ")
         #end appt content
         end_appt_layout = QHBoxLayout()
         self.back_button = QPushButton("End Appointment")
@@ -92,8 +94,6 @@ class AppointmentWindow(QWidget):
         if not text:
             QMessageBox.warning(self,"Error", "The note cannot be empty")
             return
-        if not self.current_patient:
-            QMessageBox.warning(self,"Error", "Set the current patient to perform any appointment actions")
         try:
             self.controller.create_note(text)
             QMessageBox.information(self, "Success", "Note Created")
@@ -102,7 +102,7 @@ class AppointmentWindow(QWidget):
         self.note_input.clear()
 
     def retrieve_note(self):
-        self.note_display.clear()
+        #self.note_display.clear()
         text = self.text_input.text()
 
         if not text:
@@ -139,14 +139,14 @@ class AppointmentWindow(QWidget):
         
         try:
             self.controller.update_note(index, new_text)
-            QMessageBox.information(self, "Succesfully updated the note")
+            QMessageBox.information(self, "Success", "Succesfully updated the note")
         except Exception as e:
             QMessageBox.warning(self, "Error", str(e))
         self.note_key_input.clear()
         self.new_text_input.clear()
 
     def delete_note(self):
-        index = self.note_index_input
+        index = self.note_index_input.text()
 
         if not index:
             QMessageBox.warning(self, "Input Error", "Missing index")
@@ -160,7 +160,7 @@ class AppointmentWindow(QWidget):
         self.note_index_input.clear()
 
     def list_all_notes(self):
-        self.notes_display.clear()
+        #self.notes_display.clear()
         try:
             notes = self.controller.list_notes()
             if not notes:

@@ -1,10 +1,11 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QGridLayout
 
 class LoginWindow(QWidget):
-    def __init__(self, controller, switch_to_patient_window):
+    def __init__(self, controller, autosave, switch_to_patient_window):
         super().__init__()
         self.setWindowTitle("Login")
         self.controller = controller
+        self.autosave = autosave
         self.setFixedSize(1000, 1000)
         self.switch_to_patient_window = switch_to_patient_window
 

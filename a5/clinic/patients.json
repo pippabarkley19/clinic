@@ -1,1 +1,3 @@
 {"__type__": "Patient", "phn": "000000", "name": "t", "birth_date": "t", "phone": "t", "email": "t", "address": "t", "autosave": true}
+{"__type__": "Patient", "phn": "111111", "name": "g", "birth_date": "g", "phone": "g", "email": "gg", "address": "g", "autosave": true}
+{"__type__": "Patient", "phn": "123456", "name": "h", "birth_date": "h", "phone": "h", "email": "hh", "address": "h", "autosave": true}

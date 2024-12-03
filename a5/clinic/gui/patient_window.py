@@ -6,12 +6,11 @@ from clinic.patient import Patient
 from PyQt6.QtCore import Qt
 
 class PatientWindow(QWidget):
-    def __init__(self, switch_to_set_window, switch_to_login_window, controller, autosave):
+    def __init__(self, switch_to_set_window, switch_to_login_window, controller):
         super().__init__()
         self.switch_to_set_window = switch_to_set_window
         self.switch_to_login_window = switch_to_login_window
         self.controller = controller
-        self.autosave = autosave
         # commenting this out for now hoping that the box layout will fix this issue
         #self.setFixedSize(1000,2000)
         self.controller.logged = True

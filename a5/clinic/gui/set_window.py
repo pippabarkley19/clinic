@@ -3,11 +3,10 @@ from PyQt6.QtCore import Qt
 from clinic.controller import Controller
 
 class SetWindow(QWidget):
-    def __init__(self, switch_to_patient_window, switch_to_appointment_window, controller, autosave):
+    def __init__(self, switch_to_patient_window, switch_to_appointment_window, controller):
         super().__init__()
         self.setWindowTitle("Set Current Patient")
         self.controller = controller
-        self.autosave = autosave
         self.switch_to_patient_window = switch_to_patient_window
         self.switch_to_appointment_window = switch_to_appointment_window
 

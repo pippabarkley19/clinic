@@ -13,15 +13,14 @@ class ClinicGUI(QMainWindow):
     def __init__(self):
         super().__init__()
         self.controller = Controller()
-        self.autosave = self.controller.autosave
 
         self.central_widget = QStackedWidget()
         self.setCentralWidget(self.central_widget)
 
-        self.login_window = LoginWindow(self.controller, self.autosave, self.show_patient_window)
-        self.patient_window = PatientWindow(self.show_set_window, self.show_login_window, self.controller, self.autosave)
-        self.appointment_window = AppointmentWindow(self.show_set_window, self.controller, self.autosave)
-        self.set_window = SetWindow(self.show_patient_window, self.show_appointment_window, self.controller, self.autosave)
+        self.login_window = LoginWindow(self.controller, self.show_patient_window)
+        self.patient_window = PatientWindow(self.show_set_window, self.show_login_window, self.controller)
+        self.appointment_window = AppointmentWindow(self.show_set_window, self.controller)
+        self.set_window = SetWindow(self.show_patient_window, self.show_appointment_window, self.controller)
 
         self.central_widget.addWidget(self.login_window)
         self.central_widget.addWidget(self.patient_window)

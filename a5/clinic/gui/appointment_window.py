@@ -153,12 +153,29 @@ class AppointmentWindow(QWidget):
         
         try:
             self.controller.delete_note(int(index))
-            self.note_display.clear()
-            self.notes_display.clear()
+            self.refresh_notes()
             QMessageBox.information(self, "Success", "Note successfully deleted")
         except Exception as e:
             QMessageBox.warning(self, "Error", str(e))
         self.note_index_input.clear()
+
+    def refresh_notes(self):
+        self.note_display.clear()
+        self.notes_display.clear()
+
+        updated_notes = self.controller.list_notes()
+
+        if updated_notes:
+            formatted_notes = ""
+            for index, note in enumerate(updated_notes):
+                formatted_notes += (
+                    f"Index: {index}\n"
+                    f"Description: {note.text}\n"
+                    f"Date: {note.timestamp.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+                )
+            self.notes_display.setPlainText(formatted_notes)
+        else:
+            self.notes_display.setPlainText("No notes available.")
 
     def list_all_notes(self):
         #self.notes_display.clear()

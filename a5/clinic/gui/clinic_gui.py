@@ -12,7 +12,7 @@ class ClinicGUI(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.controller = Controller()
+        self.controller = Controller(autosave=True)
 
         self.central_widget = QStackedWidget()
         self.setCentralWidget(self.central_widget)

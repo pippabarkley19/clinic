@@ -37,7 +37,7 @@ class SetWindow(QWidget):
         if patient:
             self.controller.set_current_patient(phn)
             self.controller.current_patient = patient
-            self.switch_to_appointment_window()
+            self.switch_to_appointment_window(phn)
         else:
             QMessageBox.warning(self, "Error", "Invalid PHN")
             self.phn_input.clear()

@@ -19,8 +19,8 @@ class ClinicGUI(QMainWindow):
 
         self.login_window = LoginWindow(self.controller, self.show_patient_window)
         self.patient_window = PatientWindow(self.show_set_window, self.show_login_window, self.controller)
-        self.appointment_window = AppointmentWindow(self.show_set_window, self.controller)
         self.set_window = SetWindow(self.show_patient_window, self.show_appointment_window, self.controller)
+        self.appointment_window = None
 
         self.central_widget.addWidget(self.login_window)
         self.central_widget.addWidget(self.patient_window)
@@ -34,7 +34,11 @@ class ClinicGUI(QMainWindow):
     def show_patient_window(self):
         self.central_widget.setCurrentWidget(self.patient_window)
 
-    def show_appointment_window(self):
+    def show_appointment_window(self, phn):
+        if self.appointment_window == None:
+            self.appointment_window = AppointmentWindow(self.show_set_window, self.controller, phn)
+        if self.central_widget.indexOf(self.appointment_window) == -1:
+            self.central_widget.addWidget(self.appointment_window)
         self.central_widget.setCurrentWidget(self.appointment_window)
 
     def show_login_window(self):

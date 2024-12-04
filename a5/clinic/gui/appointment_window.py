@@ -2,13 +2,11 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QLab
 from PyQt6.QtCore import Qt
 
 class AppointmentWindow(QWidget):
-    def __init__(self, switch_to_set_window, controller, phn):
+    def __init__(self, switch_to_set_window, controller):
         super().__init__()
 
         self.switch_to_set_window = switch_to_set_window
         self.controller = controller
-        self.phn = phn
-        self.controller.current_patient = self.controller.search_patient(phn)
         self.setWindowTitle("Appointment Management")
 
         # Main layout

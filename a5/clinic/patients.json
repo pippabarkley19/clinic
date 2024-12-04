@@ -2,3 +2,4 @@
 {"__type__": "Patient", "phn": "111111", "name": "g", "birth_date": "g", "phone": "g", "email": "gg", "address": "g", "autosave": true}
 {"__type__": "Patient", "phn": "123456", "name": "h", "birth_date": "h", "phone": "h", "email": "hh", "address": "h", "autosave": true}
 {"__type__": "Patient", "phn": "222222", "name": "e", "birth_date": "e", "phone": "e", "email": "e", "address": "e", "autosave": true}
+{"__type__": "Patient", "phn": "333333", "name": "r", "birth_date": "r", "phone": "r", "email": "r", "address": "r", "autosave": true}

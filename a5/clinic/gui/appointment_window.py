@@ -2,19 +2,27 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QLab
 from PyQt6.QtCore import Qt
 
 class AppointmentWindow(QWidget):
-    def __init__(self, switch_to_set_window, controller):
+    def __init__(self, switch_to_patient_window, controller):
         super().__init__()
 
-        self.switch_to_set_window = switch_to_set_window
+        self.switch_to_patient_window = switch_to_patient_window
         self.controller = controller
         self.setWindowTitle("Appointment Management")
-
+        #current_patient = self.controller.current_patient
         # Main layout
         layout = QVBoxLayout()
 
         # who is the current patient
-        #self.current_patient_label = QLabel(f"Current patient is: {self.current_patient.name} ")
+        #self.current_patient_label = QLabel(f"Current patient is: {self.controller.current_patient.name} ")
         #end appt content
+        self.phn_input_label = QLabel("Enter patient PHN")
+        self.phn_input = QLineEdit()
+        self.phn_input_button = QPushButton("Start Appointment")
+        self.phn_input_button.clicked.connect(self.enter_button)
+        layout.addWidget(self.phn_input_label)
+        layout.addWidget(self.phn_input)
+        layout.addWidget(self.phn_input_button)
+
         end_appt_layout = QHBoxLayout()
         self.back_button = QPushButton("End Appointment")
         self.back_button.clicked.connect(self.end_appointment)
@@ -83,9 +91,21 @@ class AppointmentWindow(QWidget):
 
         self.setLayout(layout)
 
+    def enter_button(self):
+        phn = self.phn_input.text()
+        if not phn:
+            QMessageBox.warning(self, "Error", "Must Enter phn")
+            return
+        patient = self.controller.search_patient(phn)
+        if not patient:
+            QMessageBox.warning(self, "Error", "Invalid phn")
+            self.phn_input.clear()
+            return
+        self.controller.set_current_patient(phn)
+
     def end_appointment(self):
         self.controller.unset_current_patient()
-        self.switch_to_set_window()
+        self.switch_to_patient_window()
     
     def create_note(self):
         text = self.note_input.text()

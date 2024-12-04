@@ -9,6 +9,7 @@ class SetWindow(QWidget):
         self.controller = controller
         self.switch_to_patient_window = switch_to_patient_window
         self.switch_to_appointment_window = switch_to_appointment_window
+        self.controller.current_patient = None
 
         layout = QVBoxLayout()
 
@@ -33,11 +34,10 @@ class SetWindow(QWidget):
             QMessageBox.warning(self, "Error", "Enter a PHN")
             self.phn_input.clear()
             return
-        patient = self.controller.search_patient(phn) 
-        if patient:
-            self.controller.set_current_patient(phn)
-            self.controller.current_patient = patient
-            self.switch_to_appointment_window()
-        else:
+        if not self.controller.search_patient(phn):
             QMessageBox.warning(self, "Error", "Invalid PHN")
             self.phn_input.clear()
+            return
+        self.controller.set_current_patient(phn)
+        #self.controller.current_patient = patient
+        self.switch_to_appointment_window()

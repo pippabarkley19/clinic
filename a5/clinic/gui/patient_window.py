@@ -6,9 +6,9 @@ from clinic.patient import Patient
 from PyQt6.QtCore import Qt
 
 class PatientWindow(QWidget):
-    def __init__(self, switch_to_set_window, switch_to_login_window, controller):
+    def __init__(self, switch_to_appointment_window, switch_to_login_window, controller):
         super().__init__()
-        self.switch_to_set_window = switch_to_set_window
+        self.switch_to_appointment_window = switch_to_appointment_window
         self.switch_to_login_window = switch_to_login_window
         self.controller = controller
         # commenting this out for now hoping that the box layout will fix this issue
@@ -275,4 +275,4 @@ class PatientWindow(QWidget):
             QMessageBox.critical(self, "Error", f"An error occurred: {str(e)}")
 
     def new_appointment(self):
-        self.switch_to_set_window()
+        self.switch_to_appointment_window()
